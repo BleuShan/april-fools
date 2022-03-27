@@ -34,7 +34,7 @@ function(setup_vcpkg)
       CACHE STRING "Vcpkg root directory")
   endif()
 
-  if(VCPKG_ROOT STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg")
+  if(VCPKG_ROOT STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg")
     set(LOCAL_VCPKG_ROOT ON)
   endif()
 
