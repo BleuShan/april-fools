@@ -1,7 +1,7 @@
 test_target(
-  afengine
+  AFEngine
   LINK_LIBRARIES
-  ${PROJECT_NAME}::afengine
+  ${PROJECT_NAME}::AFEngine
 )
 
 add_subdirectory(Application)

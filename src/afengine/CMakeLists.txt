@@ -2,7 +2,7 @@ find_package(Folly CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
 library_target(
-  afengine
+  AFEngine
   LINK_LIBRARIES
   Folly::folly
   Folly::folly_deps
