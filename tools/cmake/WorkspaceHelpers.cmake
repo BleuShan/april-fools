@@ -120,7 +120,7 @@ function(workspace_helpers_set_target_cxx_properties name)
         CXX_EXTENSIONS OFF
         VISIBILITY_PRESET hidden
     )
-    
+
     if(APPLE)
       set_target_properties(
         AFEditor
@@ -134,12 +134,18 @@ function(workspace_helpers_set_target_cxx_properties name)
       )
     endif()
 
-    if(WIN32)
+    if(WIN32 AND MSVC)
       target_compile_definitions(
         ${name}
         PUBLIC
-        UNICODE=1
-        _UNICODE=1
+        UNICODE
+        _UNICODE
+      )
+      target_compile_options(
+       ${name}
+       PUBLIC
+       /bigobj
+       /MP
       )
     endif()
 

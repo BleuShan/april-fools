@@ -1,2 +1,2 @@
-add_subdirectory(AFEngine)
-add_subdirectory(AFEditor)
+add_subdirectory(afengine)
+add_subdirectory(afeditor)
