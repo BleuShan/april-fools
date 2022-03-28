@@ -1,4 +1,5 @@
 add_sources(
   PRIVATE
-  main.cc
+  main.h
+  main.mm
 )

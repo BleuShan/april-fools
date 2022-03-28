@@ -128,6 +128,15 @@ function(workspace_helpers_set_target_cxx_properties name)
         _UNICODE=1
       )
     endif()
+
+    target_include_directories(${name}
+        SYSTEM
+        INTERFACE
+        $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
+    )
 endfunction()
 
 function(workspace_helpers_set_target_pdb_properties name)
@@ -343,15 +352,6 @@ function(library_target name)
     endif()
 
     workspace_helpers_set_target_properties(${name})
-
-    target_include_directories(${name}
-        SYSTEM
-        INTERFACE
-        $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
-        PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
-    )
     string(TOUPPER ${name} basename)
     cmake_path(
         APPEND

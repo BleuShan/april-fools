@@ -28,6 +28,11 @@
       "generator": "Ninja Multi-Config"
     },
     {
+      "name": "Xcode",
+      "hidden": true,
+      "generator": "Xcode"
+    },
+    {
       "name": "VS2022",
       "hidden": true,
       "generator": "Visual Studio 17 2022"
@@ -162,12 +167,12 @@
       "hidden": true
     },
     {
-      "name": "ninja-x64-macOS",
-      "inherits": ["common", "x64-macOS", "Ninja"]
+      "name": "Xcode-x64-macOS",
+      "inherits": ["common", "x64-macOS", "Xcode"]
     },
     {
-      "name": "ninja-x64-macOS-dynamic",
-      "inherits": ["common", "x64-macOS-dynamic", "Ninja"]
+      "name": "Xcode-x64-macOS-dynamic",
+      "inherits": ["common", "x64-macOS-dynamic", "Xcode"]
     },
     {
       "name": "VS2022-x64-windows",
@@ -180,16 +185,16 @@
   ],
   "buildPresets": [
     {
-      "name": "ninja-x64-macOS-dynamic-debug",
+      "name": "Xcode-x64-macOS-dynamic-debug",
       "displayName": "Debug",
-      "configurePreset": "ninja-x64-macOS-dynamic",
+      "configurePreset": "Xcode-x64-macOS-dynamic",
       "inheritConfigureEnvironment": true,
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "ninja-x64-macOS-dynamic-release",
+      "name": "Xcode-x64-macOS-dynamic-release",
       "displayName": "Release",
-      "configurePreset": "ninja-x64-macOS-dynamic",
+      "configurePreset": "Xcode-x64-macOS-dynamic",
       "inheritConfigureEnvironment": true,
       "configuration": "Release"
     },
