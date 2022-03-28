@@ -12,7 +12,7 @@ if(WIN32)
   )
 endif()
 
-if(WORKSPACE_TARGET_OS STREQUAL macOS)
+if(APPLE)
   set_target_properties(
     AFEditor
     PROPERTIES

@@ -120,6 +120,20 @@ function(workspace_helpers_set_target_cxx_properties name)
         CXX_EXTENSIONS OFF
         VISIBILITY_PRESET hidden
     )
+    
+    if(APPLE)
+      set_target_properties(
+        AFEditor
+        PROPERTIES
+        OBJC_STANDARD 11
+        OBJC_EXTENSIONS OFF
+        OBJC_STANDARD_REQUIRED ON
+        OBJC_EXTENSIONS OFF
+        OBJCXX_STANDARD 23
+        OBJCXX_STANDARD_REQUIRED ON
+      )
+    endif()
+
     if(WIN32)
       target_compile_definitions(
         ${name}
@@ -130,7 +144,6 @@ function(workspace_helpers_set_target_cxx_properties name)
     endif()
 
     target_include_directories(${name}
-        SYSTEM
         INTERFACE
         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
         PUBLIC
@@ -428,7 +441,6 @@ function(test_target name)
     set(CURRENT_TARGET ${target_name} PARENT_SCOPE)
 
     target_include_directories(${target_name}
-        SYSTEM
         INTERFACE
         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
         PUBLIC

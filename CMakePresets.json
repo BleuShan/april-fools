@@ -10,6 +10,9 @@
       "binaryDir": "${sourceDir}/build",
       "toolchainFile": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
       "installDir": "${sourceDir}/dist",
+      "debug": {
+        "find": true 
+      },
       "hidden": true
     },
     {
@@ -56,7 +59,7 @@
     {
       "name": "macOS",
       "cacheVariables": {
-        "WORKSPACE_TARGET_OS": "macOS"
+        "CMAKE_SYSTEM_NAME": "macOS"
       },
       "condition": {
         "type": "equals",
@@ -112,8 +115,7 @@
     {
       "name": "windows",
       "cacheVariables": {
-        "WORKSPACE_TARGET_OS": "Windows",
-        "WIN32": true
+        "CMAKE_SYSTEM_NAME": "Windows"
       },
       "condition": {
         "type": "equals",
@@ -185,32 +187,22 @@
   ],
   "buildPresets": [
     {
-      "name": "Xcode-x64-macOS-dynamic-debug",
-      "displayName": "Debug",
+      "name": "Xcode-x64-macOS-dynamic",
+      "displayName": "Default",
       "configurePreset": "Xcode-x64-macOS-dynamic",
-      "inheritConfigureEnvironment": true,
-      "configuration": "RelWithDebInfo"
+      "inheritConfigureEnvironment": true
     },
     {
-      "name": "Xcode-x64-macOS-dynamic-release",
-      "displayName": "Release",
-      "configurePreset": "Xcode-x64-macOS-dynamic",
-      "inheritConfigureEnvironment": true,
-      "configuration": "Release"
-    },
-    {
-      "name": "VS2022-x64-windows-dynamic-debug",
-      "displayName": "Debug",
+      "name": "VS2022-x64-windows-dynamic",
+      "displayName": "Default",
       "configurePreset": "VS2022-x64-windows-dynamic",
-      "inheritConfigureEnvironment": true,
-      "configuration": "RelWithDebInfo"
+      "inheritConfigureEnvironment": true
     },
     {
-      "name": "VS2022-x64-windows-dynamic-release",
-      "displayName": "Release",
-      "configurePreset": "VS2022-x64-windows-dynamic",
-      "inheritConfigureEnvironment": true,
-      "configuration": "Release"
+      "name": "VS2022-x64-windows-static",
+      "displayName": "Default",
+      "configurePreset": "VS2022-x64-windows",
+      "inheritConfigureEnvironment": true
     }
   ]
 }

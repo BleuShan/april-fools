@@ -3,6 +3,15 @@ include_guard()
 include(CMakeDependentOption)
 include(WorkspaceUtilities)
 
+set(
+  WORKSPACE_SUPPORTED_SYSTEMS
+  macOS
+  Windows
+  CACHE
+  INTERNAL
+  "Allowed System"
+)
+
 function(find_installed_vcpkg_packages)
   message("-- Scanning manifest dependencies using: \"${VCPKG_MANIFEST_FILE}\"")
   file(READ ${VCPKG_MANIFEST_FILE} manifest)
@@ -116,4 +125,16 @@ function(setup_vcpkg)
     VCPKG_BOOTSTRAP_SCRIPT
     VCPKG_LINKAGE
   )
+endfunction()
+
+function(setup_vcpkg_features)
+  set(features ${VCPKG_MANIFEST_FEATURES})
+  if(BUILD_TESTING)
+    list(APPEND features tests)
+  endif()
+  list(REMOVE_ITEM features ${WORKSPACE_SUPPORTED_SYSTEMS})
+  string(TOLOWER ${CMAKE_SYSTEM_NAME} system)
+  list(APPEND features ${system})
+  string(JOIN ";" features ${features})
+  set(VCPKG_MANIFEST_FEATURES ${features} CACHE INTERNAL "Enabled manifest features")
 endfunction()

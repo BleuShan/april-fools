@@ -8,7 +8,13 @@ set(
 include(Workspace)
 
 project(AprilsFools
-        VERSION 0.1.0)
+        VERSION 0.1.0
+        LANGUAGES C CXX)
+
+if(APPLE)
+  enable_language(OBJCXX)
+  enable_language(OBJC)
+endif()
 
 include(WorkspaceOptions)
 

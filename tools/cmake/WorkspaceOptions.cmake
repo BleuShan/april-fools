@@ -18,3 +18,5 @@ cmake_dependent_option(
   "AprilFools_IS_TOP_LEVEL;NOT AprilFools_IS_TOP_LEVEL" 
   ON
 )
+
+setup_vcpkg_features()

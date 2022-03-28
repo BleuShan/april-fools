@@ -5,9 +5,42 @@
   "dependencies": [
     {
       "name": "folly"
-    },
-    {
-      "name": "gtest"
     }
-  ]
+  ],
+  "features": {
+    "tests": {
+      "description": "Build tests",
+      "dependencies": [
+        {
+          "name": "gtest"
+        }
+      ]
+    },
+    "macos": {
+      "description": "macOS Support",
+      "dependencies": [
+        {
+          "name": "imgui",
+          "features": [
+            "docking-experimental",
+            "freetype",
+            "metal-binding"
+          ]
+        }
+      ]
+    },
+    "windows": {
+      "description": "windows support",
+      "dependencies": [
+        {
+          "name": "imgui",
+          "features": [
+            "docking-experimental",
+            "freetype",
+            "dx12-binding"
+          ]
+        }
+      ]
+    }
+  }
 }

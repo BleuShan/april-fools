@@ -19,7 +19,7 @@ class AFENGINE_API Application final : public Foundation::Object<Application> {
   AFENGINE_PRIVATE static auto teardown(Application* app) -> void;
  private:
   Application() = default;
-  bool running_;
+  bool running_ = false;
 
 };
 
