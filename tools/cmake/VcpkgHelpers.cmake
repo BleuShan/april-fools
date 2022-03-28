@@ -1,5 +1,6 @@
 include_guard()
 
+include(CMakeDependentOption)
 include(WorkspaceUtilities)
 
 function(find_installed_vcpkg_packages)
@@ -63,7 +64,7 @@ function(setup_vcpkg)
     OFF
     "Toogles vcpkg manifest mode"
     "EXISTS VCPKG_MANIFEST_FILE;NOT EXISTS VCPKG_MANIFEST_FILE"
-    FORCE
+    ON
   )
 
   cmake_dependent_option(
@@ -71,11 +72,11 @@ function(setup_vcpkg)
     OFF
     "Toogles vcpkg manifest mode"
     "VCPKG_MANIFEST_MODE;NOT VCPKG_MANIFEST_MODE"
-    FORCE
+    ON
   )
 
 
-  if(WIN32)
+  if(CMAKE_HOST_WIN32)
     set(VCPKG_EXECUTABLE
       ${VCPKG_EXECUTABLE}.exe
       CACHE STRING "Vcpkg executable")

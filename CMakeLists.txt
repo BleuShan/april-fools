@@ -7,6 +7,17 @@ set(
 
 include(Workspace)
 
-project(${WORKSPACE_PACKAGE_NAME})
+project(AprilsFools
+        VERSION 0.1.0)
+
+include(WorkspaceOptions)
 
 add_subdirectory(src)
+
+if(BUILD_TESTING)
+  enable_testing()
+  include(Dart)
+  include(GoogleTest)
+  find_package(GTest CONFIG REQUIRED)
+  add_subdirectory(test)
+endif()

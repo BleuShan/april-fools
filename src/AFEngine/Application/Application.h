@@ -5,14 +5,22 @@
 
 #include <AFEngine/Foundation/Object.h>
 
+#include <functional>
+
 namespace AFEngine {
 class AFENGINE_API Application final : public Foundation::Object<Application> {
  public:
-  AFENGINE_PRIVATE static auto create() -> Application*;
   static auto instance() -> SharedPtr;
 
+  auto configure() -> const Application&;
+
+  
+  AFENGINE_PRIVATE static auto create() -> Application*;
+  AFENGINE_PRIVATE static auto teardown(Application* app) -> void;
  private:
   Application() = default;
+  bool running_;
+
 };
 
 }  // namespace AFEngine

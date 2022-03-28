@@ -120,6 +120,14 @@ function(workspace_helpers_set_target_cxx_properties name)
         CXX_EXTENSIONS OFF
         VISIBILITY_PRESET hidden
     )
+    if(WIN32)
+      target_compile_definitions(
+        ${name}
+        PUBLIC
+        UNICODE=1
+        _UNICODE=1
+      )
+    endif()
 endfunction()
 
 function(workspace_helpers_set_target_pdb_properties name)
@@ -138,14 +146,14 @@ function(workspace_helpers_set_target_pdb_properties name)
 endfunction()
 
 function(workspace_helpers_set_target_output_directory_properties name)
-       set_target_properties(
-        ${name}
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
-        PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-    )
+  set_target_properties(
+    ${name}
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+    PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+  )
 endfunction()
 
 function(workspace_helpers_set_target_properties name)
@@ -160,32 +168,14 @@ function(workspace_helpers_set_target_properties name)
     endif()
 endfunction()
 
-macro(workspace_helpers_project name)
-    workspace_helpers_parse_arguments(${ARGV})
-    workspace_helpers_get_parse_arguments_value(
-    workspace_helpers_project_version ${name} VERSION)
-    set(PROJECT_TARGET ${name})
-    set(PROJECT_EXPORT_TARGET ${WORKSPACE_PACKAGE_NAME}::${name})
-    if(NOT DEFINED workspace_helpers_project_version)
-        set(workspace_helpers_project_version ${WORKSPACE_PACKAGE_VERSION})
-    endif()
-
-    project(
-        ${name}
-        VERSION ${workspace_helpers_project_version}
-        LANGUAGES C CXX
-    )
-endmacro()
-
 function(workspace_helpers_target_type name var)
-    foreach(flag ${workspace_helpers_parse_arguments_flags})
-        workspace_helpers_get_parse_arguments_value(present ${name} ${flag})
-        if(present)
-            set(${var} ${flag} PARENT_SCOPE)
-            return()
-        endif()
-
-    endforeach()
+  foreach(flag ${workspace_helpers_parse_arguments_flags})
+    workspace_helpers_get_parse_arguments_value(present ${name} ${flag})
+    if(present)
+      set(${var} ${flag} PARENT_SCOPE)
+      return()
+    endif()
+  endforeach()
 endfunction()
 
 function(workspace_helpers_resolve_target_sources name)
@@ -305,7 +295,7 @@ function(workspace_helpers_resolve_target_sources name)
     set(${output_variable} ${filenames} PARENT_SCOPE)
 endfunction()
 
-function(workspace_helpers_set_target_link_librairies name)
+function(workspace_helpers_set_target_link_libraries name)
     set(list_types INTERFACE PUBLIC PRIVATE)
     set(list_type PRIVATE)
     workspace_helpers_get_parse_arguments_value(items ${name} LINK_LIBRARIES)
@@ -318,17 +308,6 @@ function(workspace_helpers_set_target_link_librairies name)
       target_link_libraries(${name} ${list_type} ${item})
     endforeach()
 endfunction()
-
-macro(library_project name)
-    workspace_helpers_project(${name} ${ARGN})
-    library_target(${ARGV})
-endmacro()
-
-macro(executable_project name)
-    workspace_helpers_project(${ARGV})
-    unset(PROJECT_EXPORT_TARGET)
-    executable_target(${ARGV})
-endmacro()
 
 function(library_target name)
     workspace_helpers_parse_arguments(${ARGV})
@@ -345,9 +324,9 @@ function(library_target name)
         OUTPUT_VARIABLE sources
     )
     add_library(${name} ${type} ${sources})
-    add_library(${WORKSPACE_PACKAGE_NAME}::${name} ALIAS ${name})
+    add_library(${CMAKE_PROJECT_NAME}::${name} ALIAS ${name})
 
-
+    set(CURRENT_TARGET ${name} PARENT_SCOPE)
     if(BUILD_SHARED_LIBS OR type STREQUAL "SHARED")
         string(TOUPPER "${name}_exports" define_symbol)
         set_target_properties(
@@ -391,32 +370,33 @@ function(library_target name)
         STATIC_DEFINE ${basename}_STATIC
     )
 
-    workspace_helpers_set_target_link_librairies(${name})
+    workspace_helpers_set_target_link_libraries(${name})
 endfunction()
 
 
 function(executable_target name)
-    workspace_helpers_parse_arguments(${ARGV})
-    workspace_helpers_get_parse_arguments_value(sources ${name} SOURCES)
-    workspace_helpers_target_type(${name} type)
+  workspace_helpers_parse_arguments(${ARGV})
+  workspace_helpers_get_parse_arguments_value(sources ${name} SOURCES)
+  workspace_helpers_target_type(${name} type)
 
-    workspace_helpers_resolve_target_sources(
-        ${name}
-        ALLOWED_SUBDIRECTORIES
-            src
-        ALLOWED_FILENAMES
-            main
-        OUTPUT_VARIABLE sources
-    )
+  workspace_helpers_resolve_target_sources(
+      ${name}
+      ALLOWED_SUBDIRECTORIES
+          src
+      ALLOWED_FILENAMES
+          main
+      OUTPUT_VARIABLE sources
+  )
 
-    add_executable(${name} ${type} ${sources})
+  add_executable(${name} ${type} ${sources})
+  set(CURRENT_TARGET ${name} PARENT_SCOPE)
 
-    workspace_helpers_set_target_properties(${name})
-    workspace_helpers_set_target_link_librairies(${name})
+  workspace_helpers_set_target_properties(${name})
+  workspace_helpers_set_target_link_libraries(${name})
 endfunction()
 
 
-function(add_test_suite name)
+function(test_target name)
     if(NOT BUILD_TESTING)
         return()
     endif()
@@ -431,22 +411,30 @@ function(add_test_suite name)
 
     workspace_helpers_target_type(${target_name} type)
     workspace_helpers_get_parse_arguments_value(sources ${target_name} SOURCES)
-    if(DEFINED PROJECT_EXPORT_TARGET)
-        list(APPEND disallowed_filenames ${name})
-    endif()
 
     workspace_helpers_resolve_target_sources(
         ${name}
+        ALLOWED_FILENAMES
+          main
         ALLOWED_SUBDIRECTORIES
-            test
-            tests
+          test
+          tests
         DISALLOWED_FILENAMES
-            ${disallowed_filenames}
+          ${disallowed_filenames}
         OUTPUT_VARIABLE sources
     )
 
     add_executable(${target_name} ${type} ${sources})
+    set(CURRENT_TARGET ${target_name} PARENT_SCOPE)
 
+    target_include_directories(${target_name}
+        SYSTEM
+        INTERFACE
+        $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>
+    )
     workspace_helpers_set_target_cxx_properties(${target_name})
     workspace_helpers_set_target_output_directory_properties(${target_name})
     workspace_helpers_set_target_pdb_properties(${target_name})
@@ -456,17 +444,13 @@ function(add_test_suite name)
         set_target_properties(${target_name} PROPERTIES ${props})
     endif()
 
-    workspace_helpers_set_target_link_librairies(${target_name})
+    workspace_helpers_set_target_link_libraries(${target_name})
 
     target_link_libraries(
         ${target_name}
         PRIVATE
-        GTest::gmock_main
+        GTest::gmock
     )
-
-    if(DEFINED PROJECT_EXPORT_TARGET)
-        target_link_libraries(${target_name} PRIVATE ${PROJECT_EXPORT_TARGET})
-    endif()
 
     gtest_discover_tests(${target_name})
 endfunction()
@@ -491,7 +475,7 @@ function(add_sources)
     )
     workspace_helpers_get_parse_arguments_value(target ${prefix} TARGET)
     if(NOT DEFINED target)
-        set(target ${PROJECT_TARGET})
+        set(target ${CURRENT_TARGET})
     endif()
 
     list(FIND ARGV TARGET index)

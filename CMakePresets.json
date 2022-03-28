@@ -6,24 +6,10 @@
   },
   "configurePresets": [
     {
-      "name": "default",
+      "name": "common",
       "binaryDir": "${sourceDir}/build",
       "toolchainFile": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
       "installDir": "${sourceDir}/dist",
-      "hidden": true
-    },
-    {
-      "name": "debug",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      },
-      "hidden": true
-    },
-    {
-      "name": "release",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      },
       "hidden": true
     },
     {
@@ -37,8 +23,36 @@
       }
     },
     {
-      "name": "osx",
-      "generator": "Ninja",
+      "name": "Ninja",
+      "hidden": true,
+      "generator": "Ninja Multi-Config"
+    },
+    {
+      "name": "VS2022",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022"
+    },
+    {
+      "name": "x64",
+      "hidden": true,
+      "architecture": {
+        "strategy": "external",
+        "value": "x64"
+      }
+    },
+    {
+      "name": "arm64",
+      "hidden": true,
+      "architecture": {
+        "strategy": "external",
+        "value": "arm64"
+      }
+    },
+    {
+      "name": "macOS",
+      "cacheVariables": {
+        "WORKSPACE_TARGET_OS": "macOS"
+      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -47,8 +61,8 @@
       "hidden": true
     },
     {
-      "name": "osx-dynamic",
-      "inherits": ["osx", "dynamic"],
+      "name": "x64-macOS-dynamic",
+      "inherits": [ "x64", "macOS", "dynamic" ],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -58,8 +72,44 @@
       "hidden": true
     },
     {
+      "name": "x64-macOS",
+      "inherits": [ "x64", "macOS" ],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "x64-osx"
+        }
+      },
+      "hidden": true
+    },
+    {
+      "name": "arm64-macOS-dynamic",
+      "inherits": [ "arm64", "macOS", "dynamic" ],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "arm64-osx-dynamic"
+        }
+      },
+      "hidden": true
+    },
+    {
+      "name": "arm64-macOS",
+      "inherits": [ "arm64", "macOS" ],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "arm64-osx"
+        }
+      },
+      "hidden": true
+    },
+    {
       "name": "windows",
-      "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+        "WORKSPACE_TARGET_OS": "Windows",
+        "WIN32": true
+      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -68,20 +118,101 @@
       "hidden": true
     },
     {
-      "name": "windows-dynamic",
-      "inherits": ["default", "windows", "dynamic", "debug"]
+      "name": "arm64-windows",
+      "inherits": [ "arm64", "windows" ],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "arm64-windows"
+        }
+      },
+      "hidden": true
     },
     {
-      "name": "windows-dynamic-rel",
-      "inherits": ["default", "windows", "dynamic", "release"]
+      "name": "arm64-windows-dynamic",
+      "inherits": [ "arm64", "windows", "dynamic" ],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "arm64-windows"
+        }
+      },
+      "hidden": true
     },
     {
-      "name": "osx-dynamic-debug",
-      "inherits": ["default", "osx-dynamic", "debug"]
+      "name": "x64-windows",
+      "inherits": [ "x64", "windows" ],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "x64-windows"
+        }
+      },
+      "hidden": true
     },
     {
-      "name": "osx-dynamic-rel",
-      "inherits": ["default", "osx-dynamic", "release"]
+      "name": "x64-windows-dynamic",
+      "inherits": [ "x64", "windows", "dynamic" ],
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "string",
+          "value": "x64-windows"
+        }
+      },
+      "hidden": true
+    },
+    {
+      "name": "ninja-x64-macOS",
+      "inherits": [ "common", "x64-macOS", "Ninja" ]
+    },
+    {
+      "name": "ninja-x64-macOS-dynamic",
+      "inherits": [ "common", "x64-macOS-dynamic", "Ninja" ]
+    },
+    {
+      "name": "VS2022-x64-windows",
+      "inherits": [ "common", "x64-windows", "VS2022" ]
+    },
+    {
+      "name": "VS2022-x64-windows-dynamic",
+      "inherits": [ "common", "x64-windows-dynamic", "VS2022" ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ninja-x64-macOS-dynamic-debug",
+      "displayName": "Debug",
+      "configurePreset": "ninja-x64-macOS-dynamic",
+      "inheritConfigureEnvironment": true,
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ninja-x64-macOS-dynamic-release",
+      "displayName": "Release",
+      "configurePreset": "ninja-x64-macOS-dynamic",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "VS2022-x64-windows-dynamic-debug",
+      "displayName": "Debug",
+      "configurePreset": "VS2022-x64-windows-dynamic",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "VS2022-x64-windows-dynamic-relWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "VS2022-x64-windows-dynamic",
+      "inheritConfigureEnvironment": true,
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "VS2022-x64-windows-dynamic-release",
+      "displayName": "Release",
+      "configurePreset": "VS2022-x64-windows-dynamic",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
     }
   ]
 }

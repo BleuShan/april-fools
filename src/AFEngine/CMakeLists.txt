@@ -1,6 +1,6 @@
 find_package(Folly CONFIG REQUIRED)
 
-library_project(
+library_target(
   AFEngine
   LINK_LIBRARIES
   Folly::folly
@@ -15,11 +15,3 @@ add_sources(
 )
 
 add_subdirectory(Application)
-
-
-if(BUILD_TESTING)
-  enable_testing()
-  include(Dart)
-  include(GoogleTest)
-  find_package(GTest CONFIG REQUIRED)
-endif()
