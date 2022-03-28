@@ -3,7 +3,7 @@
 
 #include <afengine/export_macros.h>
 
-#include <afengine/Foundation/Object.h>
+#include <afengine/foundation/Object.h>
 
 #include <functional>
 

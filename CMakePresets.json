@@ -10,9 +10,6 @@
       "binaryDir": "${sourceDir}/build",
       "toolchainFile": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
       "installDir": "${sourceDir}/dist",
-      "debug": {
-        "find": true 
-      },
       "hidden": true
     },
     {
@@ -59,7 +56,7 @@
     {
       "name": "macOS",
       "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "macOS"
+        "WORKSPACE_TARGET_SYSTEM_NAME": "macOS"
       },
       "condition": {
         "type": "equals",
@@ -115,7 +112,7 @@
     {
       "name": "windows",
       "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "Windows"
+        "WORKSPACE_TARGET_SYSTEM_NAME": "Windows"
       },
       "condition": {
         "type": "equals",

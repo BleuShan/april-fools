@@ -1,4 +1,4 @@
-#include <afengine/Foundation/Runtime/Runtime.h>
+#include <afengine/foundation/Runtime/Runtime.h>
 #include <winrt/base.h>
 
 using afengine::foundation::Runtime;

@@ -123,7 +123,7 @@ function(workspace_helpers_set_target_cxx_properties name)
 
     if(APPLE)
       set_target_properties(
-        AFEditor
+        ${name}
         PROPERTIES
         OBJC_STANDARD 11
         OBJC_EXTENSIONS OFF

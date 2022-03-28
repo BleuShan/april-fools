@@ -1,4 +1,4 @@
   add_sources(
     PRIVATE
-    ${CMAKE_SYSTEM}.cc
+    ${WORKSPACE_TARGET_SYSTEM_NAME}.cc
   )

@@ -1,1 +1,1 @@
-add_subdirectory(${CMAKE_SYSTEM_NAME})
+add_subdirectory(${WORKSPACE_TARGET_SYSTEM_NAME})
