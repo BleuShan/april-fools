@@ -7,8 +7,8 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "AFGame - Debug",
-      "program": "${workspaceFolder}/build/bin/Debug/AFGame",
+      "name": "AFEditor - Debug",
+      "program": "${workspaceFolder}/build/bin/RelWithDebInfo/AFEditor",
       "args": [],
       "cwd": "${workspaceFolder}"
     }

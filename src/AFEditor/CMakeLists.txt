@@ -12,5 +12,14 @@ if(WIN32)
   )
 endif()
 
+if(WORKSPACE_TARGET_OS STREQUAL macOS)
+  set_target_properties(
+    AFEditor
+    PROPERTIES
+    OBJC_STANDARD 11
+    OBJCXX_STANDARD 23
+  )
+endif()
+
 
 add_subdirectory(Platforms)

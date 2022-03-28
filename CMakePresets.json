@@ -62,7 +62,7 @@
     },
     {
       "name": "x64-macOS-dynamic",
-      "inherits": [ "x64", "macOS", "dynamic" ],
+      "inherits": ["x64", "macOS", "dynamic"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -73,7 +73,7 @@
     },
     {
       "name": "x64-macOS",
-      "inherits": [ "x64", "macOS" ],
+      "inherits": ["x64", "macOS"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -84,7 +84,7 @@
     },
     {
       "name": "arm64-macOS-dynamic",
-      "inherits": [ "arm64", "macOS", "dynamic" ],
+      "inherits": ["arm64", "macOS", "dynamic"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -95,7 +95,7 @@
     },
     {
       "name": "arm64-macOS",
-      "inherits": [ "arm64", "macOS" ],
+      "inherits": ["arm64", "macOS"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -119,7 +119,7 @@
     },
     {
       "name": "arm64-windows",
-      "inherits": [ "arm64", "windows" ],
+      "inherits": ["arm64", "windows"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -130,7 +130,7 @@
     },
     {
       "name": "arm64-windows-dynamic",
-      "inherits": [ "arm64", "windows", "dynamic" ],
+      "inherits": ["arm64", "windows", "dynamic"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -141,7 +141,7 @@
     },
     {
       "name": "x64-windows",
-      "inherits": [ "x64", "windows" ],
+      "inherits": ["x64", "windows"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -152,7 +152,7 @@
     },
     {
       "name": "x64-windows-dynamic",
-      "inherits": [ "x64", "windows", "dynamic" ],
+      "inherits": ["x64", "windows", "dynamic"],
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": {
           "type": "string",
@@ -163,19 +163,19 @@
     },
     {
       "name": "ninja-x64-macOS",
-      "inherits": [ "common", "x64-macOS", "Ninja" ]
+      "inherits": ["common", "x64-macOS", "Ninja"]
     },
     {
       "name": "ninja-x64-macOS-dynamic",
-      "inherits": [ "common", "x64-macOS-dynamic", "Ninja" ]
+      "inherits": ["common", "x64-macOS-dynamic", "Ninja"]
     },
     {
       "name": "VS2022-x64-windows",
-      "inherits": [ "common", "x64-windows", "VS2022" ]
+      "inherits": ["common", "x64-windows", "VS2022"]
     },
     {
       "name": "VS2022-x64-windows-dynamic",
-      "inherits": [ "common", "x64-windows-dynamic", "VS2022" ]
+      "inherits": ["common", "x64-windows-dynamic", "VS2022"]
     }
   ],
   "buildPresets": [
@@ -196,13 +196,6 @@
     {
       "name": "VS2022-x64-windows-dynamic-debug",
       "displayName": "Debug",
-      "configurePreset": "VS2022-x64-windows-dynamic",
-      "inheritConfigureEnvironment": true,
-      "configuration": "Debug"
-    },
-    {
-      "name": "VS2022-x64-windows-dynamic-relWithDebInfo",
-      "displayName": "RelWithDebInfo",
       "configurePreset": "VS2022-x64-windows-dynamic",
       "inheritConfigureEnvironment": true,
       "configuration": "RelWithDebInfo"
