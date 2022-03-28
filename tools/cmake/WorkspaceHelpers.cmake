@@ -148,6 +148,7 @@ function(workspace_helpers_set_target_cxx_properties name)
         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
     )
 endfunction()
@@ -441,10 +442,7 @@ function(test_target name)
     set(CURRENT_TARGET ${target_name} PARENT_SCOPE)
 
     target_include_directories(${target_name}
-        INTERFACE
-        $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
-        PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>
     )
     workspace_helpers_set_target_cxx_properties(${target_name})
@@ -461,6 +459,7 @@ function(test_target name)
     target_link_libraries(
         ${target_name}
         PRIVATE
+        GTest::gtest
         GTest::gmock
     )
 

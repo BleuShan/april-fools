@@ -10,15 +10,18 @@
 namespace AFEngine {
 class AFENGINE_API Application final : public Foundation::Object<Application> {
  public:
-  static auto instance() -> SharedPtr;
+  auto operator=(const Application& other) -> Application& {
+    return *this;
+  }
 
-  auto configure() -> const Application&;
+  static auto instance() -> Application&;
 
   
   AFENGINE_PRIVATE static auto create() -> Application*;
   AFENGINE_PRIVATE static auto teardown(Application* app) -> void;
  private:
   Application() = default;
+
   bool running_ = false;
 
 };

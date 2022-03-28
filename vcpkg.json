@@ -13,6 +13,13 @@
       "dependencies": [
         {
           "name": "gtest"
+        },
+        {
+          "name": "imgui",
+          "features": [
+            "docking-experimental",
+            "freetype"
+          ]
         }
       ]
     },
@@ -22,8 +29,7 @@
         {
           "name": "imgui",
           "features": [
-            "docking-experimental",
-            "freetype",
+            "osx-binding",
             "metal-binding"
           ]
         }
@@ -35,8 +41,7 @@
         {
           "name": "imgui",
           "features": [
-            "docking-experimental",
-            "freetype",
+            "win32-binding",
             "dx12-binding"
           ]
         }

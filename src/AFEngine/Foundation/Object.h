@@ -12,7 +12,7 @@ namespace AFEngine::Foundation {
  * @tparam Derived a concrete type deriving object.
  */
 template <typename Derived>
-class Object : public std::enable_shared_from_this<Derived> {
+class Object {
  public:
   /**
    * Alias for the shared pointer type

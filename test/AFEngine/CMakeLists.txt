@@ -3,3 +3,5 @@ test_target(
   LINK_LIBRARIES
   ${PROJECT_NAME}::AFEngine
 )
+
+add_subdirectory(Application)

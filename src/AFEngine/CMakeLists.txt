@@ -12,8 +12,7 @@ library_target(
 add_sources(
   PUBLIC
   AFEngine.h
-  PRIVATE
-  AFEngine.cc
 )
 
 add_subdirectory(Application)
+add_subdirectory(Foundation)
