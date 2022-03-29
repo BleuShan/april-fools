@@ -122,16 +122,11 @@ function(workspace_helpers_set_target_cxx_properties name)
     )
 
     if(APPLE)
-      set_target_properties(
-        ${name}
-        PROPERTIES
-        OBJC_STANDARD 11
-        OBJC_EXTENSIONS OFF
-        OBJC_STANDARD_REQUIRED ON
-        OBJC_EXTENSIONS OFF
-        OBJCXX_STANDARD 23
-        OBJCXX_STANDARD_REQUIRED ON
-      )
+        target_link_libraries(
+            ${name}
+            PRIVATE
+            "-framework Cocoa"
+        )
     endif()
 
     if(WIN32 AND MSVC)
@@ -381,6 +376,7 @@ function(library_target name)
         export_macros.h
         OUTPUT_VARIABLE export_filename
     )
+     string(TOLOWER ${export_filename} export_filename)
     generate_export_header(
         ${name}
         INCLUDE_GUARD_NAME ${basename}_EXPORT_MACROS_H

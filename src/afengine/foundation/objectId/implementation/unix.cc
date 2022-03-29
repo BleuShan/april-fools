@@ -1,8 +1,7 @@
-#include <afengine/foundation/ObjectId/ObjectId.h>
+#include <afengine/foundation/objectId/ObjectId.h>
 #include <uuid/uuid.h>
 
-using afengine::Foundation::ObjectId;
+using afengine::foundation::ObjectId;
 
 struct ObjectId::Implementation {};
 
-~ObjectId::ObjectId() = default;

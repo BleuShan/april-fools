@@ -3,13 +3,16 @@
 
 #include <afengine/export_macros.h>
 
+#include <functional>
+
 namespace afengine::foundation {
 /**
  * The runtime environment
  */
 class AFENGINE_API Runtime final {
  public:
-  static auto get() -> Runtime&;
+  using AcquireCallback = std::function<void(Runtime&)>;
+  static auto acquire(AcquireCallback callback) -> bool;
   AFENGINE_PRIVATE static auto create() -> Runtime*;
   AFENGINE_PRIVATE static auto teardown(Runtime*) -> void;
 

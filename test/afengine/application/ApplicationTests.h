@@ -7,7 +7,7 @@ class ApplicationTests : public testing::Test {
   void SetUp() override;
   void TearDown() override;
 
-  Application* app = nullptr;
+  Application::SharedPtr app = nullptr;
 };
 
 }  // namespace afengine

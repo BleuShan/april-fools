@@ -8,12 +8,12 @@ using folly::Singleton;
 static Singleton<Application> DefaultApplication{Application::create,
                                                  Application::teardown};
 
-Application& Application::instance() {
-  return *DefaultApplication.get();
+auto Application::instance() -> SharedPtr {
+  return DefaultApplication.try_get();
 }
 
-Application* Application::create() {
+auto Application::create() -> Application* {
   return new Application();
 }
 
-void Application::teardown(Application* instance) {}
+auto Application::teardown(Application* instance) -> void {}

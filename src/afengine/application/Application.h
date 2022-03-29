@@ -12,7 +12,7 @@ class AFENGINE_API Application final : public foundation::Object<Application> {
  public:
   auto operator=(const Application& other) -> Application& { return *this; }
 
-  static auto instance() -> Application&;
+  static auto instance() -> SharedPtr;
 
   AFENGINE_PRIVATE static auto create() -> Application*;
   AFENGINE_PRIVATE static auto teardown(Application* app) -> void;

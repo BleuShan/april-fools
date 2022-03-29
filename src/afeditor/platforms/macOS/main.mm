@@ -1,5 +1,5 @@
 #include <afengine/application/Application.h>
-#include <AFEditor/Platforms/macOS/main.h>
+#include <afeditor/platforms/macOS/main.h>
 
 using afengine::Application;
 
