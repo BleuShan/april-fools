@@ -1,7 +1,7 @@
 #ifndef AFENGINE_FOUNDATION_OBJECTID_TESTS_H
 #define AFENGINE_FOUNDATION_OBJECTID_TESTS_H
 
-#include <afengine/foundation/object/id/objectId.h>
+#include <afengine/foundation/object/id/ObjectId.h>
 #include <gtest/gtest.h>
 
 namespace afengine::foundation {

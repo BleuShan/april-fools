@@ -4,4 +4,4 @@ add_sources(
   ObjectId.cc
 )
 
-add_subdirectory(detail)
+add_subdirectory(internal)

@@ -22,4 +22,4 @@ if(APPLE)
 endif()
 
 
-add_subdirectory(Platforms)
+add_subdirectory(platforms)

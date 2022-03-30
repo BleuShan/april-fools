@@ -9,7 +9,6 @@ library_target(
   Folly::folly
   Folly::folly_deps
   absl::btree
-  absl::optional
   imgui::imgui
 )
 

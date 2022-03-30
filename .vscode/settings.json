@@ -16,6 +16,9 @@
     "cstdint": "cpp",
     "string": "cpp",
     "cstring": "cpp",
-    "optional": "cpp"
+    "optional": "cpp",
+    "string_view": "cpp",
+    "__tuple": "cpp",
+    "*.ipp": "cpp"
   }
 }

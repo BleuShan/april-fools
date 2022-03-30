@@ -5,4 +5,4 @@ add_sources(
   Runtime.cc
 )
 
-add_subdirectory(implementation)
+add_subdirectory(internal)
