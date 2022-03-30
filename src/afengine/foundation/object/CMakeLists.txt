@@ -1,6 +1,7 @@
 add_sources(
   PUBLIC
   Object.h
+  Object.cpp
 )
 
 

@@ -4,28 +4,19 @@
 #include <afengine/export-macros.h>
 #include <afengine/foundation/object/id/ObjectId.h>
 
-#include <memory>
-
 namespace afengine::foundation {
+
 /**
- * The common trait class for all objects.
- *
- * @tparam Derived a concrete type deriving object.
+ * The common class for all objects.
  */
-template <typename Derived>
-class Object : public std::enable_shared_from_this<Derived> {
+class AFENGINE_EXPORT Object {
  public:
-  /**
-   * Alias for the shared pointer type
-   */
-  using SharedPtr = std::shared_ptr<Derived>;
-  /**
-   * Alias for the weak pointer type
-   */
-  using WeakPtr = std::weak_ptr<Derived>;
+  auto id() const -> ObjectId { return id_; }
 
  protected:
   Object() = default;
+
+  ObjectId id_;
 };
 
 }  // namespace afengine::foundation

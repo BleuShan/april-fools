@@ -2,7 +2,6 @@
 #include <uuid/uuid.h>
 
 #include <numeric>
-#include <utility>
 
 using afengine::foundation::internal::ObjectId;
 
@@ -16,7 +15,6 @@ constexpr static const auto kShortUuidStringLen = std::accumulate(
 constexpr static const auto kShortUuidStringSize = kShortUuidStringLen + 1;
 
 ObjectId::ObjectId() {
-  static_assert(sizeof(ObjectId::uuid_) == kDataSize);
   uuid_generate_random(reinterpret_cast<uint8_t*>(uuid_.data()));
 }
 
@@ -60,6 +58,7 @@ ObjectId::ObjectId(const std::string_view source) {
 ObjectId::ObjectId(ObjectId&& source) : uuid_{std::move(source.uuid_)} {}
 
 ObjectId::~ObjectId() {
+  static_assert(sizeof(uuid_) == kDataSize);
   if (cstr_ != nullptr) {
     delete[] cstr_;
   }

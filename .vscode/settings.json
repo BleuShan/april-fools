@@ -19,6 +19,14 @@
     "optional": "cpp",
     "string_view": "cpp",
     "__tuple": "cpp",
-    "*.ipp": "cpp"
-  }
+    "*.ipp": "cpp",
+    "algorithm": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "forward_list": "cpp",
+    "list": "cpp",
+    "queue": "cpp",
+    "limits": "cpp"
+  },
+  "C_Cpp.default.mergeConfigurations": true
 }

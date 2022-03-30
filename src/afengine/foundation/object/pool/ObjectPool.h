@@ -4,13 +4,13 @@
 #include <absl/container/btree_map.h>
 #include <afengine/export-macros.h>
 #include <afengine/foundation/object/id/ObjectId.h>
+#include <afengine/foundation/object/pool/internal/ObjectPoolAllocator.h>
 #include <afengine/foundation/types.h>
 
 namespace afengine::foundation {
 
 /**
- * A collection of
- *
+ * An ObjectPool is an object database for all objects created at runtime.
  */
 class AFENGINE_EXPORT ObjectPool final {
  private:

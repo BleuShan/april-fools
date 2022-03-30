@@ -4,3 +4,5 @@ add_sources(
   PRIVATE
   ObjectPool.cc
 )
+
+add_subdirectory(internal)
