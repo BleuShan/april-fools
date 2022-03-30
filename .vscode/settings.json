@@ -1,4 +1,21 @@
 {
   "makefile.extensionOutputFolder": "./.vscode",
-  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "files.associations": {
+    "*.cjs": "javascript",
+    "*.cppm": "cpp",
+    "cfloat": "cpp",
+    "climits": "cpp",
+    "clocale": "cpp",
+    "compare": "cpp",
+    "*.tcc": "cpp",
+    "functional": "cpp",
+    "type_traits": "cpp",
+    "cstddef": "cpp",
+    "cstdlib": "cpp",
+    "cstdint": "cpp",
+    "string": "cpp",
+    "cstring": "cpp",
+    "optional": "cpp"
+  }
 }

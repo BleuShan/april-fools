@@ -1,0 +1,12 @@
+#ifndef ${INCLUDE_GUARD_NAME}
+#define ${INCLUDE_GUARD_NAME}
+
+#ifndef TARGET_OS_WINDOWS
+  #cmakedefine01 TARGET_OS_WINDOWS
+#endif
+
+#ifndef TARGET_OS_MACOS
+  #cmakedefine01 TARGET_OS_MACOS
+#endif
+
+#endif

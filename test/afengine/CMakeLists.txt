@@ -4,4 +4,5 @@ test_target(
   ${PROJECT_NAME}::AFEngine
 )
 
-add_subdirectory(Application)
+add_subdirectory(application)
+add_subdirectory(foundation)

@@ -41,3 +41,15 @@ function(make_cmake_variable_name)
   string(TOUPPER ${varvalue} varvalue)
   set(${varname} ${varvalue} PARENT_SCOPE)
 endfunction()
+
+function(target_cmake_binary_include_path variable)
+  cmake_path(
+    APPEND
+    CMAKE_BINARY_DIR
+    include
+    ${ARGN}
+    OUTPUT_VARIABLE value
+  )
+  string(TOLOWER ${value} value)
+  set(${variable} ${value} PARENT_SCOPE)
+endfunction()

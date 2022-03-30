@@ -8,7 +8,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "AFEditor - Debug",
-      "program": "${workspaceFolder}/build/bin/RelWithDebInfo/AFEditor",
+      "program": "${workspaceFolder}/build/bin/Debug/AFEditor",
       "args": [],
       "cwd": "${workspaceFolder}"
     }

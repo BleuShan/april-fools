@@ -1,8 +1,9 @@
 add_sources(
   PUBLIC
   foundation.h
-  Object.h
+  string.h
+  types.h
 )
 
-add_subdirectory(objectId)
+add_subdirectory(object)
 add_subdirectory(runtime)

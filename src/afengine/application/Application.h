@@ -1,21 +1,22 @@
 #ifndef AFENGINE_APPLICATION_H
 #define AFENGINE_APPLICATION_H
 
-#include <afengine/export_macros.h>
+#include <afengine/export-macros.h>
 
-#include <afengine/foundation/Object.h>
+#include <afengine/foundation/object/Object.h>
 
 #include <functional>
 
 namespace afengine {
-class AFENGINE_API Application final : public foundation::Object<Application> {
+class AFENGINE_EXPORT Application final
+    : public foundation::Object<Application> {
  public:
   auto operator=(const Application& other) -> Application& { return *this; }
 
   static auto instance() -> SharedPtr;
 
-  AFENGINE_PRIVATE static auto create() -> Application*;
-  AFENGINE_PRIVATE static auto teardown(Application* app) -> void;
+  AFENGINE_NO_EXPORT static auto create() -> Application*;
+  AFENGINE_NO_EXPORT static auto teardown(Application* app) -> void;
 
  private:
   Application() = default;

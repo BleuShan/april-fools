@@ -2,9 +2,19 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
   "name": "april-fools",
   "version-string": "0.1.0",
+  "default-features": ["tests"],
   "dependencies": [
     {
       "name": "folly"
+    },
+    {
+      "name": "abseil",
+      "features": ["cxx17"]
+    },
+
+    {
+      "name": "imgui",
+      "features": ["docking-experimental", "freetype"]
     }
   ],
   "features": {
@@ -13,13 +23,6 @@
       "dependencies": [
         {
           "name": "gtest"
-        },
-        {
-          "name": "imgui",
-          "features": [
-            "docking-experimental",
-            "freetype"
-          ]
         }
       ]
     },
@@ -28,10 +31,7 @@
       "dependencies": [
         {
           "name": "imgui",
-          "features": [
-            "osx-binding",
-            "metal-binding"
-          ]
+          "features": ["osx-binding", "metal-binding"]
         }
       ]
     },
@@ -40,10 +40,7 @@
       "dependencies": [
         {
           "name": "imgui",
-          "features": [
-            "win32-binding",
-            "dx12-binding"
-          ]
+          "features": ["win32-binding", "dx12-binding"]
         }
       ]
     }

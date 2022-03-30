@@ -25,7 +25,7 @@
     {
       "name": "Ninja",
       "hidden": true,
-      "generator": "Ninja"
+      "generator": "Ninja Multi-Config"
     },
     {
       "name": "Xcode",
@@ -56,7 +56,7 @@
     {
       "name": "macOS",
       "cacheVariables": {
-        "WORKSPACE_TARGET_SYSTEM_NAME": "macOS"
+        "TARGET_OS": "macOS"
       },
       "condition": {
         "type": "equals",
@@ -112,7 +112,7 @@
     {
       "name": "windows",
       "cacheVariables": {
-        "WORKSPACE_TARGET_SYSTEM_NAME": "Windows"
+        "TARGET_OS": "Windows"
       },
       "condition": {
         "type": "equals",
@@ -174,11 +174,12 @@
       "inherits": ["common", "x64-macOS-dynamic", "Xcode"]
     },
     {
-      "name": "ninja-x64-macOS-dynamic",
-      "inherits": ["common", "x64-macOS-dynamic", "Ninja"],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "name": "Ninja-x64-macOS-dynamic",
+      "inherits": ["common", "x64-macOS-dynamic", "Ninja"]
+    },
+    {
+      "name": "Ninja-x64-macOS",
+      "inherits": ["common", "x64-macOS", "Ninja"]
     },
     {
       "name": "VS2022-x64-windows",
@@ -197,9 +198,21 @@
       "inheritConfigureEnvironment": true
     },
     {
-      "name": "ninja-x64-macOS-dynamic",
+      "name": "Xcode-x64-macOS",
       "displayName": "Default",
-      "configurePreset": "ninja-x64-macOS-dynamic",
+      "configurePreset": "Ninja-x64-macOS",
+      "inheritConfigureEnvironment": true
+    },
+    {
+      "name": "Ninja-x64-macOS-dynamic",
+      "displayName": "Default",
+      "configurePreset": "Ninja-x64-macOS-dynamic",
+      "inheritConfigureEnvironment": true
+    },
+    {
+      "name": "Ninja-x64-macOS",
+      "displayName": "Default",
+      "configurePreset": "Ninja-x64-macOS",
       "inheritConfigureEnvironment": true
     },
     {

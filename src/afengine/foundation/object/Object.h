@@ -1,7 +1,8 @@
 #ifndef AFENGINE_FOUNDATION_OBJECT_H
 #define AFENGINE_FOUNDATION_OBJECT_H
 
-#include <afengine/export_macros.h>
+#include <afengine/export-macros.h>
+#include <afengine/foundation/object/id/ObjectId.h>
 
 #include <memory>
 

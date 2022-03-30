@@ -122,11 +122,19 @@ function(workspace_helpers_set_target_cxx_properties name)
     )
 
     if(APPLE)
-        target_link_libraries(
-            ${name}
-            PRIVATE
-            "-framework Cocoa"
-        )
+        if(TARGET_OS STREQUAL macOS)
+            target_link_libraries(
+                ${name}
+                PRIVATE
+                "-framework Cocoa"
+            )
+        else()
+             target_link_libraries(
+                ${name}
+                PRIVATE
+                "-framework UIKit"
+            )
+        endif()
     endif()
 
     if(WIN32 AND MSVC)
@@ -144,7 +152,9 @@ function(workspace_helpers_set_target_cxx_properties name)
       )
     endif()
 
-    target_include_directories(${name}
+    target_include_directories(
+        ${name}
+        SYSTEM
         INTERFACE
         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
         PUBLIC
@@ -358,6 +368,7 @@ function(library_target name)
             PROPERTIES
             DEFINE_SYMBOL ${define_symbol}
         )
+
         string(TOUPPER "${name}_BUILD_SHARED_LIBRARY" build_shared)
         target_compile_definitions(
             ${name}
@@ -367,23 +378,22 @@ function(library_target name)
     endif()
 
     workspace_helpers_set_target_properties(${name})
-    string(TOUPPER ${name} basename)
-    cmake_path(
-        APPEND
-        CMAKE_BINARY_DIR
-        include
+    string(TOUPPER ${name}_ prefix_name)
+    target_cmake_binary_include_path(
+        export_filename
         ${name}
-        export_macros.h
-        OUTPUT_VARIABLE export_filename
+        export-macros.h
     )
-     string(TOLOWER ${export_filename} export_filename)
     generate_export_header(
         ${name}
-        INCLUDE_GUARD_NAME ${basename}_EXPORT_MACROS_H
+        BASE_NAME ""
+        PREFIX_NAME ${prefix_name}
+        INCLUDE_GUARD_NAME ${prefix_name}EXPORT_MACROS_H
+        DEPRECATED_MACRO_NAME DEPRECATED
         EXPORT_FILE_NAME ${export_filename}
-        EXPORT_MACRO_NAME ${basename}_API
-        NO_EXPORT_MACRO_NAME ${basename}_PRIVATE
-        STATIC_DEFINE ${basename}_STATIC
+        EXPORT_MACRO_NAME EXPORT
+        NO_EXPORT_MACRO_NAME NO_EXPORT
+        STATIC_DEFINE STATIC
     )
 
     workspace_helpers_set_target_link_libraries(${name})
@@ -499,4 +509,33 @@ function(add_sources)
     endif()
 
     target_sources(${target} ${ARGV})
+endfunction()
+
+
+function(configure_file_target_file)
+    set(target ${ARGV0})
+    if(NOT DEFINED target)
+        set(target ${CURRENT_TARGET})
+    endif()
+    string(JOIN "_" os TARGET OS ${TARGET_OS})
+    string(MAKE_C_IDENTIFIER ${os} os)
+    string(TOUPPER "${os}" os)
+    set(${os} 1)
+
+    string(JOIN "_" INCLUDE_GUARD_NAME ${target} targets h)
+    string(MAKE_C_IDENTIFIER ${INCLUDE_GUARD_NAME} INCLUDE_GUARD_NAME)
+    string(TOUPPER ${INCLUDE_GUARD_NAME} INCLUDE_GUARD_NAME)
+    cmake_path(
+        APPEND
+        CMAKE_CURRENT_FUNCTION_LIST_DIR
+        config-headers
+        targets.in
+        OUTPUT_VARIABLE input
+    )
+    target_cmake_binary_include_path(
+        output
+        ${target}
+        targets.h
+    )
+    configure_file(${input} ${output})
 endfunction()
