@@ -9,31 +9,40 @@
 
 namespace afengine::foundation::internal {
 class AFENGINE_EXPORT ObjectId {
- public:
-  ~ObjectId();
+  public:
+    AFENGINE_EXPORT friend auto operator==(const ObjectId& lhs,
+                                           const ObjectId& rhs) -> bool;
+    AFENGINE_EXPORT friend auto operator!=(const ObjectId& lhs,
+                                           const ObjectId& rhs) -> bool;
+    AFENGINE_EXPORT friend auto operator<(const ObjectId& lhs,
+                                          const ObjectId& rhs) -> bool;
+    AFENGINE_EXPORT friend auto operator<=(const ObjectId& lhs,
+                                           const ObjectId& rhs) -> bool;
+    AFENGINE_EXPORT friend auto operator>(const ObjectId& lhs,
+                                          const ObjectId& rhs) -> bool;
+    AFENGINE_EXPORT friend auto operator>=(const ObjectId& lhs,
+                                           const ObjectId& rhs) -> bool;
 
-  operator std::string();
-  operator std::string_view();
-  auto operator=(const ObjectId& source) -> ObjectId&;
-  auto operator=(ObjectId&& source) -> ObjectId&;
-  auto operator==(const ObjectId& other) const -> bool;
-  auto operator!=(const ObjectId& other) const -> bool;
-  auto operator<(const ObjectId& other) const -> bool;
-  auto operator<=(const ObjectId& other) const -> bool;
-  auto operator>(const ObjectId& other) const -> bool;
-  auto operator>=(const ObjectId& other) const -> bool;
+    ~ObjectId();
 
-  auto isNull() const noexcept -> bool;
-  auto cstr() -> const char*;
+    operator String();
+    operator StringView();
+    auto operator=(const ObjectId& source) -> ObjectId&;
+    auto operator=(ObjectId&& source) -> ObjectId&;
 
- protected:
-  ObjectId();
-  ObjectId(const ObjectId& source);
-  ObjectId(const std::string_view data);
-  ObjectId(ObjectId&& source);
+    auto IsNull() const noexcept -> bool;
 
-  std::array<byte, 16> uuid_{};
-  char* cstr_{nullptr};
+  protected:
+    ObjectId();
+    ObjectId(const ObjectId& source);
+    ObjectId(ObjectId&& source) noexcept;
+    explicit ObjectId(StringView value);
+
+    auto cstr() -> const String::pointer;
+
+  private:
+    std::array<byte, 16> uuid_{};
+    String::pointer cstr_{nullptr};
 };
 }  // namespace afengine::foundation::internal
 

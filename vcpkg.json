@@ -40,7 +40,13 @@
       "dependencies": [
         {
           "name": "imgui",
-          "features": ["win32-binding", "dx12-binding"]
+          "features": [ "win32-binding", "dx12-binding" ]
+        },
+        {
+          "name": "directx-headers"
+        },
+        {
+          "name": "directxmath"
         }
       ]
     }

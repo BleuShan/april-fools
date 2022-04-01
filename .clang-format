@@ -1,5 +1,8 @@
 BasedOnStyle: Google
 ColumnLimit: 80
+Standard: c++20
+
+
 IndentPPDirectives: BeforeHash
 AllowShortFunctionsOnASingleLine: Inline
-Standard: c++20
+IndentAccessModifiers: true

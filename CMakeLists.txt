@@ -13,6 +13,7 @@ project(AprilsFools
 
 include(WorkspaceOptions)
 
+setup_msvc()
 add_subdirectory(src)
 
 if(BUILD_TESTING)

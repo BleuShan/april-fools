@@ -121,44 +121,30 @@ function(workspace_helpers_set_target_cxx_properties name)
         VISIBILITY_PRESET hidden
     )
 
-    if(APPLE)
-        if(TARGET_OS STREQUAL macOS)
-            target_link_libraries(
-                ${name}
-                PRIVATE
-                "-framework Cocoa"
-            )
-        else()
-             target_link_libraries(
-                ${name}
-                PRIVATE
-                "-framework UIKit"
-            )
-        endif()
-    endif()
+    target_link_libraries(
+      ${name}
+      PRIVATE
+      "$<$<BOOL:${APPLE}>:$<IF:$<STREQUAL ${TARGET_OS},macOS>,-framework Cocoa,-framework UIKit>>"
+    )
 
-    if(WIN32 AND MSVC)
-      target_compile_definitions(
-        ${name}
-        PUBLIC
-        UNICODE
-        _UNICODE
-      )
-      target_compile_options(
+    target_compile_definitions(
+      ${name}
+      PUBLIC
+      "$<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:UNICODE;_UNICODE>"
+    )
+    target_compile_options(
        ${name}
        PUBLIC
-       /bigobj
-       /MP
-      )
-    endif()
+       "$<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:/bigobj;/MP>"
+     )
 
     target_include_directories(
         ${name}
-        SYSTEM
         INTERFACE
         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated>
         PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
     )
@@ -512,7 +498,7 @@ function(add_sources)
 endfunction()
 
 
-function(configure_file_target_file)
+function(configure_target_file)
     set(target ${ARGV0})
     if(NOT DEFINED target)
         set(target ${CURRENT_TARGET})
@@ -528,7 +514,8 @@ function(configure_file_target_file)
     cmake_path(
         APPEND
         CMAKE_CURRENT_FUNCTION_LIST_DIR
-        config-headers
+        config
+        headers
         targets.in
         OUTPUT_VARIABLE input
     )
@@ -538,4 +525,120 @@ function(configure_file_target_file)
         targets.h
     )
     configure_file(${input} ${output})
+endfunction()
+
+function(setup_msvc)
+  if(NOT WIN32)
+    return()
+  endif()
+  
+  message("Restoring nuget packages")
+  cmake_path(
+    APPEND
+    CMAKE_CURRENT_FUNCTION_LIST_DIR
+    config
+    packages.config
+    OUTPUT_VARIABLE input
+  )
+  if(NOT DEFINED NUGET_PACKAGES_DIR)
+  cmake_path(
+      APPEND
+      CMAKE_BINARY_DIR
+      packages
+      OUTPUT_VARIABLE dir
+  )
+  
+  set(NUGET_PACKAGES_DIR ${dir} CACHE STRING "Nuget package directory")
+  endif()
+  configure_file(${input} ${NUGET_PACKAGES_DIR}.config COPYONLY)
+ 
+  execute_process(
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMAND nuget
+    restore
+    -PackagesDirectory 
+    ${NUGET_PACKAGES_DIR}
+  )
+
+  cmake_path(
+    APPEND
+    NUGET_PACKAGES_DIR
+    Microsoft.Windows.CppWinRT.2.0.220325.3
+    OUTPUT_VARIABLE NUGET_MICROSOFT_WINDOWS_CPPWINRT
+  )
+  cmake_path(
+    APPEND
+    NUGET_MICROSOFT_WINDOWS_CPPWINRT
+    build
+    native
+    Microsoft.Windows.CppWinRT.targets
+    OUTPUT_VARIABLE cppwinrt_targets
+  )
+  cmake_path(
+    APPEND
+    NUGET_MICROSOFT_WINDOWS_CPPWINRT
+    build
+    native
+    Microsoft.Windows.CppWinRT.props
+    OUTPUT_VARIABLE cppwinrt_props
+  )
+  cmake_path(
+    APPEND
+    NUGET_MICROSOFT_WINDOWS_CPPWINRT
+    bin
+    cppwinrt.exe
+    OUTPUT_VARIABLE cppwinrt_exe
+  )
+  string(JOIN ";" project_imports ${cppwnrt_props} ${cppwnrt_targets})
+  set(NUGET_MICROSOFT_WINDOWS_CPPWINRT_IMPORTS ${project_imports} PARENT_SCOPE)
+
+  set(NUGET_MICROSOFT_WINDOWS_CPPWINRT  ${NUGET_MICROSOFT_WINDOWS_CPPWINRT} PARENT_SCOPE)
+  set(CPPWINRT_EXECUTABLE_PATH ${cppwinrt_exe})
+  generate_winrt_sdk_projection(OPTIMIZE)
+  message("Nuget packages restored")
+endfunction()
+
+function(generate_winrt_sdk_projection)
+    set(OPTIONS OPTIMIZE)
+    set(ONE_VALUE_KEYWORDS EXECUTABLE_PATH PCH_NAME)
+    set(MULTI_VALUE_KEYWORDS INPUT)
+
+    cmake_parse_arguments(PARSE_ARGV 0 CPPWINRT "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}")
+
+    if(NOT CPPWINRT_PROJECTION_ROOT_PATH)
+          cmake_path(
+            APPEND
+            CMAKE_BINARY_DIR
+            generated
+            OUTPUT_VARIABLE CPPWINRT_PROJECTION_ROOT_PATH)
+    endif()
+
+    if(NOT EXISTS "${CPPWINRT_PROJECTION_ROOT_PATH}/winrt")
+        if(NOT CPPWINRT_EXECUTABLE_PATH)
+            set(CPPWINRT_EXECUTABLE_PATH ${NUGET_MICROSOFT_WINDOWS_CPPWINRT}/bin/cppwinrt.exe)
+        endif()
+
+        set(CPPWINRT_COMMAND ${CPPWINRT_EXECUTABLE_PATH})
+
+        list(APPEND CPPWINRT_COMMAND -output ${CPPWINRT_PROJECTION_ROOT_PATH})
+        list(APPEND CPPWINRT_COMMAND -reference sdk)
+
+        if(CPPWINRT_PCH_NAME)
+            list(APPEND CPPWINRT_COMMAND -pch ${CPPWINRT_PCH_NAME})
+        endif()
+
+        if(CPPWINRT_OPTIMIZE)
+            list(APPEND CPPWINRT_COMMAND -optimize)
+        endif()
+
+        message(VERBOSE "Generating CppWinRT headers")
+        message(VERBOSE "generate_winrt_projection: CPPWINRT_COMMAND = ${CPPWINRT_COMMAND}")
+
+        execute_process(
+            COMMAND ${CPPWINRT_COMMAND}
+            OUTPUT_VARIABLE CPPWINRT_OUTPUT
+            )
+
+        message(VERBOSE "generate_winrt_projection: CPPWINRT_OUTPUT = ${CPPWINRT_OUTPUT}")
+    endif()
 endfunction()

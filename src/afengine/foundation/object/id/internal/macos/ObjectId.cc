@@ -2,8 +2,9 @@
 #include <uuid/uuid.h>
 
 #include <numeric>
+#include <stdexcept>
 
-using afengine::foundation::internal::ObjectId;
+namespace afengine::foundation::internal {
 
 constexpr static const auto kDataSize = sizeof(uuid_t);
 constexpr static const auto kCStrSize = sizeof(uuid_string_t);
@@ -27,7 +28,10 @@ ObjectId::ObjectId(const ObjectId& source) {
   }
 }
 
-ObjectId::ObjectId(const std::string_view source) {
+ObjectId::ObjectId(ObjectId&& source) noexcept
+    : uuid_{std::move(source.uuid_)} {}
+
+ObjectId::ObjectId(const std::string_view value) {
   auto sourceSize = source.size();
   auto sourceData = source.data();
   if (sourceSize == kCStrSize || sourceSize == kCStrLen) {
@@ -50,12 +54,14 @@ ObjectId::ObjectId(const std::string_view source) {
     }
   }
 
+  if (cstr_ == nullptr) {
+    throw new std::invalid_argument("value is not a valid uuid string");
+  }
+
   if (cstr_ != nullptr) {
     uuid_parse(cstr_, reinterpret_cast<uint8_t*>(uuid_.data()));
   }
 }
-
-ObjectId::ObjectId(ObjectId&& source) : uuid_{std::move(source.uuid_)} {}
 
 ObjectId::~ObjectId() {
   static_assert(sizeof(uuid_) == kDataSize);
@@ -64,12 +70,12 @@ ObjectId::~ObjectId() {
   }
 }
 
-ObjectId::operator std::string() {
-  return std::string{cstr()};
+ObjectId::operator String() {
+  return String{cstr()};
 }
 
-ObjectId::operator std::string_view() {
-  return std::string_view{cstr()};
+ObjectId::operator StringView() {
+  return StringView{cstr()};
 }
 
 auto ObjectId::operator=(const ObjectId& source) -> ObjectId& {
@@ -90,42 +96,6 @@ auto ObjectId::operator=(ObjectId&& source) -> ObjectId& {
   return *this;
 }
 
-auto ObjectId::operator==(const ObjectId& other) const -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(other.uuid_.data())) ==
-         0;
-}
-
-auto ObjectId::operator!=(const ObjectId& other) const -> bool {
-  return !(*this == other);
-}
-
-auto ObjectId::operator<(const ObjectId& other) const -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(other.uuid_.data())) < 0;
-}
-
-auto ObjectId::operator>(const ObjectId& other) const -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(other.uuid_.data())) > 0;
-}
-
-auto ObjectId::operator<=(const ObjectId& other) const -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(other.uuid_.data())) <=
-         0;
-}
-
-auto ObjectId::operator>=(const ObjectId& other) const -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(other.uuid_.data())) >=
-         0;
-}
-
-auto ObjectId::isNull() const noexcept -> bool {
-  return uuid_is_null(reinterpret_cast<const uint8_t*>(uuid_.data())) == 1;
-}
-
 auto ObjectId::cstr() -> const char* {
   if (cstr_ == nullptr) {
     cstr_ = new char[kCStrSize];
@@ -133,3 +103,38 @@ auto ObjectId::cstr() -> const char* {
   }
   return cstr_;
 }
+
+auto ObjectId::IsNull() const noexcept -> bool {
+  return uuid_is_null(reinterpret_cast<const uint8_t*>(uuid_.data())) == 1;
+}
+
+auto operator==(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
+                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) == 0;
+}
+
+auto operator!=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
+                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) != 0;
+}
+
+auto operator<(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
+                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) < 0;
+}
+
+auto operator>(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
+                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) > 0;
+}
+
+auto operator<=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
+                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) <= 0;
+}
+
+auto operator>=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
+                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) >= 0;
+}
+}  // namespace afengine::foundation::internal
