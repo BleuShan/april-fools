@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.21)
 set(
-  CMAKE_MODULE_PATH
-  ${CMAKE_CURRENT_SOURCE_DIR}/tools/cmake
-  ${CMAKE_MODULE_PATH}
+        CMAKE_MODULE_PATH
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools/cmake
+        ${CMAKE_MODULE_PATH}
 )
 
 include(Workspace)
@@ -16,10 +16,10 @@ include(WorkspaceOptions)
 setup_msvc()
 add_subdirectory(src)
 
-if(BUILD_TESTING)
-  enable_testing()
-  include(Dart)
-  include(GoogleTest)
-  find_package(GTest CONFIG REQUIRED)
-  add_subdirectory(test)
-endif()
+if (BUILD_TESTING)
+    enable_testing()
+    include(Dart)
+    include(GoogleTest)
+    find_package(GTest CONFIG REQUIRED)
+    add_subdirectory(test)
+endif ()

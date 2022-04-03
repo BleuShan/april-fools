@@ -3,12 +3,12 @@
 
 using afengine::foundation::Runtime;
 
-auto Runtime::create() -> Runtime* {
+auto Runtime::Create() -> Runtime* {
   winrt::init_apartment();
   return new Runtime();
 }
 
-auto Runtime::teardown(Runtime* runtime) -> void {
+auto Runtime::Teardown(Runtime* runtime) -> void {
   runtime->shutdown();
   winrt::uninit_apartment();
 }

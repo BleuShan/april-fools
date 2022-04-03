@@ -11,6 +11,14 @@
       "program": "${workspaceFolder}/build/bin/Debug/AFEditor",
       "args": [],
       "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "AFEngineTests - Debug",
+      "program": "${workspaceFolder}/build/bin/Debug/AFEngineTests",
+      "args": [],
+      "cwd": "${workspaceFolder}"
     }
   ]
 }

@@ -25,10 +25,6 @@ ObjectId::operator String() const {
   return result;
 }
 
-ObjectId::operator StringView() const {
-  return StringView{static_cast<String>(*this)};
-}
-
 auto ObjectId::IsNull() const noexcept -> bool {
   return GuidHelper::Equals(guid_, GuidHelper::Empty());
 }

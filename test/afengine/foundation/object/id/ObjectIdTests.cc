@@ -1,60 +1,38 @@
+#include <afengine/foundation/fixtures/factories/ObjectIdFactories.h>
 #include <afengine/foundation/object/id/ObjectIdTests.h>
 
 namespace afengine::foundation {
-TEST_F(ObjectIdTests, DefaultCtor) {
-  ObjectId a{};
-  ObjectId b{};
-  EXPECT_NE(a, b) << "Should generate different random id.";
-  EXPECT_FALSE(a.IsNull()) << "Should not be null.";
-  EXPECT_FALSE(b.IsNull()) << "Should not be null.";
+
+TYPED_TEST_SUITE_P(ObjectIdTests);
+
+TYPED_TEST_P(ObjectIdTests, Constructor) {
+  const ObjectId* value{nullptr};
+  ASSERT_NO_THROW({ value = this->Value(); })
+      << "Should not throw on value creation";
+  ASSERT_NE(value, nullptr) << "Should not be null.";
+  if constexpr (std::is_same_v<typename TypeParam::ParameterType, String>) {
+    ASSERT_FALSE(value->IsNull()) << "Should not be null uuid";
+  }
 }
 
-TEST_F(ObjectIdTests, StringCtor) {
-  EXPECT_NO_THROW(value(kStringValue)) << "Should parse the value correctly";
-  EXPECT_STREQ(kStringValue.c_str(), static_cast<String>(value()).c_str())
-      << "should yield the same string back";
-  EXPECT_FALSE(value().IsNull()) << "Should not be null.";
+TYPED_TEST_P(ObjectIdTests, StringConversion) {
+  const ObjectId* value{nullptr};
+  ASSERT_NO_THROW({ value = this->Value(); })
+      << "Should not throw on value creation";
+  ASSERT_NE(value, nullptr) << "Should not be null.";
+  ASSERT_FALSE(value->IsNull()) << "Should not be null uuid";
+  auto stringValue = static_cast<String>(*value);
+  ASSERT_FALSE(IsEmptyOrBlank(stringValue))
+      << "Should return a non empty string.";
+
+  if constexpr (std::is_same_v<typename TypeParam::ParameterType, String>) {
+    String expected{fixtures::factories::ObjectIdTestFactory::kStringViewValue};
+    ASSERT_STRCASEEQ(stringValue.c_str(), expected.c_str());
+  }
 }
 
-TEST_F(ObjectIdTests, ShortStringCtor) {
-  EXPECT_NO_THROW(value(kShortStringValue))
-      << "Should parse the value correctly";
-  EXPECT_STREQ(kStringValue.c_str(), static_cast<String>(value()).c_str())
-      << "should yield the long string back";
-  EXPECT_FALSE(value().IsNull()) << "Should not be null.";
-}
+REGISTER_TYPED_TEST_SUITE_P(ObjectIdTests, Constructor, StringConversion);
 
-TEST_F(ObjectIdTests, StringViewCtor) {
-  EXPECT_NO_THROW(value(kStringViewValue))
-      << "Should parse the value correctly";
-  EXPECT_STREQ(kStringViewValue.data(), static_cast<StringView>(value()).data())
-      << "should yield the same string back";
-  EXPECT_FALSE(value().IsNull()) << "Should not be null.";
-}
-
-TEST_F(ObjectIdTests, ShortStringViewCtor) {
-  EXPECT_NO_THROW(value(kShortStringViewValue))
-      << "Should parse the value correctly";
-  EXPECT_STREQ(kStringViewValue.data(), static_cast<StringView>(value()).data())
-      << "should yield the long string back";
-  EXPECT_FALSE(value().IsNull()) << "Should not be null.";
-}
-
-TEST_F(ObjectIdTests, CopyCtor) {
-  ObjectId a{};
-  auto b{a};
-  EXPECT_EQ(a, b) << "Should generate copy itself.";
-  EXPECT_NE(&a, &b) << "Should not be the same pointer.";
-}
-
-TEST_F(ObjectIdTests, CopyAssignment) {
-  ObjectId a{};
-  ObjectId b{};
-  EXPECT_FALSE(a.IsNull()) << "Should not be null.";
-  EXPECT_FALSE(b.IsNull()) << "Should not be null.";
-  EXPECT_NE(a, b) << "Should generate different random ";
-  b = a;
-  EXPECT_EQ(a, b) << "Should generate copy itself.";
-  EXPECT_NE(&a, &b) << "Should not be the same pointer.";
-}
+INSTANTIATE_TYPED_TEST_SUITE_P(WithObjectIdFactories, ObjectIdTests,
+                               fixtures::factories::ObjectIdFactories);
 }  // namespace afengine::foundation

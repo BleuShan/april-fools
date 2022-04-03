@@ -1,19 +1,21 @@
 #include <afengine/application/Application.h>
-
+#include <afengine/foundation/object/id/ObjectId.h>
 #include <folly/Singleton.h>
 
 using afengine::Application;
+using afengine::foundation::ObjectId;
 using folly::Singleton;
 
-static Singleton<Application> DefaultApplication{Application::create,
-                                                 Application::teardown};
+static Singleton<Application> DefaultApplication{Application::Create,
+                                                 Application::Teardown};
 
-auto Application::instance() -> SharedPtr {
+auto Application::Instance() -> SharedPtr {
   return DefaultApplication.try_get();
 }
 
-auto Application::create() -> Application* {
-  return new Application();
+auto Application::Create() -> Application* {
+  auto id = ObjectId::Generate();
+  return new Application{id};
 }
 
-auto Application::teardown(Application* instance) -> void {}
+auto Application::Teardown(Application* instance) -> void {}

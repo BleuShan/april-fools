@@ -2,7 +2,7 @@
 #define AFENGINE_FOUNDATION_OBJECTID_H
 
 #include <afengine/export-macros.h>
-#include <afengine/foundation/object/id/internal/ObjectId.h>
+#include <afengine/foundation/object/id/internal/internal.h>
 #include <afengine/foundation/string.h>
 
 namespace afengine::foundation {
@@ -10,10 +10,20 @@ namespace afengine::foundation {
  * A unique identifier for an object
  *
  */
-class AFENGINE_EXPORT ObjectId final : public internal::ObjectId {
- public:
-  template <typename... Args>
-  ObjectId(Args&&... args) : internal::ObjectId{std::forward<Args>(args)...} {};
+class AFENGINE_EXPORT ObjectId final
+    : public Inherits<ObjectId, internal::ObjectId> {
+  public:
+    using Constructors::Inherits;
+
+    static auto Parse(StringView value) -> ObjectId {
+      auto result = Base::Parse(value);
+      return ObjectId{result};
+    }
+
+    static auto Generate() -> ObjectId {
+      auto result = Base::Generate();
+      return ObjectId{result};
+    }
 };
 
 }  // namespace afengine::foundation

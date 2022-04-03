@@ -1,140 +1,96 @@
-#include <afengine/foundation/object/id/internal/ObjectId.h>
+#include <afengine/foundation/object/id/internal/internal.h>
 #include <uuid/uuid.h>
 
+#include <algorithm>
 #include <numeric>
 #include <stdexcept>
 
 namespace afengine::foundation::internal {
 
-constexpr static const auto kDataSize = sizeof(uuid_t);
-constexpr static const auto kCStrSize = sizeof(uuid_string_t);
-constexpr static const auto kCStrLen = kCStrSize - 1;
-constexpr static const auto kUuidStringSegmentLengths =
+constexpr auto kCStrSize = sizeof(uuid_string_t);
+constexpr auto kCStrLen = kCStrSize - 1;
+constexpr auto kUuidStringSegmentLengths =
     std::array<size_t, 5>{8, 4, 4, 4, 12};
-constexpr static const auto kShortUuidStringLen = std::accumulate(
-    kUuidStringSegmentLengths.begin(), kUuidStringSegmentLengths.end(), 0ul);
-constexpr static const auto kShortUuidStringSize = kShortUuidStringLen + 1;
+constexpr auto kShortUuidStringLen = std::accumulate(
+    kUuidStringSegmentLengths.begin(), kUuidStringSegmentLengths.end(), 0UL);
+constexpr auto kShortUuidStringSize = kShortUuidStringLen + 1;
 
-ObjectId::ObjectId() {
-  uuid_generate_random(reinterpret_cast<uint8_t*>(uuid_.data()));
+ObjectId::operator String() const {
+  std::array<String::value_type, kCStrSize> buffer{};
+  uuid_unparse(Value().data(), buffer.data());
+  return String{buffer.data()};
 }
 
-ObjectId::ObjectId(const ObjectId& source) {
-  std::copy(source.uuid_.begin(), source.uuid_.end(), uuid_.begin());
-
-  if (source.cstr_ != nullptr) {
-    cstr_ = new char[kDataSize];
-    std::memcpy(cstr_, source.cstr_, kCStrSize);
-  }
-}
-
-ObjectId::ObjectId(ObjectId&& source) noexcept
-    : uuid_{std::move(source.uuid_)} {}
-
-ObjectId::ObjectId(const std::string_view value) {
-  auto sourceSize = source.size();
-  auto sourceData = source.data();
+auto ObjectId::Parse(StringView value) -> ValueType {
+  auto sourceSize = value.size();
+  bool success = false;
+  ValueType result{};
   if (sourceSize == kCStrSize || sourceSize == kCStrLen) {
-    auto size = std::max(source.size(), kCStrSize);
-    cstr_ = new char[kCStrSize];
-    strcpy(cstr_, sourceData);
+    String data{value};
+    success = uuid_parse(data.data(), result.data()) == 0;
   }
 
-  if (cstr_ == nullptr && (sourceSize == kShortUuidStringLen ||
-                           sourceSize == kShortUuidStringSize)) {
-    cstr_ = new char[kCStrSize];
-    size_t offset = 0;
-    size_t sourceOffset = 0;
+  if (!success && (sourceSize == kShortUuidStringLen ||
+                   sourceSize == kShortUuidStringSize)) {
+    std::array<StringView::value_type, kCStrSize> buffer{};
+    auto reader = value.cbegin();  // NOLINT()
+    auto writer = buffer.begin();
+    auto writerEnd = buffer.cend();
+    auto readerEnd = value.cend();
+
     for (auto&& size : kUuidStringSegmentLengths) {
-      std::memcpy(&cstr_[offset], &sourceData[sourceOffset], size);
-      sourceOffset += size;
-      offset += size;
-      cstr_[offset] = offset < kShortUuidStringLen ? '-' : '\0';
-      offset += 1;
+      writer = std::copy_n(reader, size, writer);
+      reader = std::ranges::next(reader, size, readerEnd);
+
+      if (reader != readerEnd && writer != writerEnd) {
+        *writer = '-';
+        writer = std::ranges::next(writer, 1, writerEnd);
+      }
     }
+
+    success = uuid_parse(buffer.data(), result.data()) == 0;
   }
 
-  if (cstr_ == nullptr) {
-    throw new std::invalid_argument("value is not a valid uuid string");
+  if (!success) {
+    throw std::invalid_argument(
+        fmt::format("\"{}\" is not a valid uuid string", value));
   }
 
-  if (cstr_ != nullptr) {
-    uuid_parse(cstr_, reinterpret_cast<uint8_t*>(uuid_.data()));
-  }
+  return result;
 }
 
-ObjectId::~ObjectId() {
-  static_assert(sizeof(uuid_) == kDataSize);
-  if (cstr_ != nullptr) {
-    delete[] cstr_;
-  }
-}
+auto ObjectId::Generate() -> ValueType {
+  ValueType result{};
+  uuid_generate_random(result.data());
 
-ObjectId::operator String() {
-  return String{cstr()};
-}
-
-ObjectId::operator StringView() {
-  return StringView{cstr()};
-}
-
-auto ObjectId::operator=(const ObjectId& source) -> ObjectId& {
-  std::copy(source.uuid_.begin(), source.uuid_.end(), uuid_.begin());
-  if (source.cstr_ != nullptr) {
-    cstr_ = cstr_ == nullptr ? new char[kDataSize] : cstr_;
-    std::memcpy(cstr_, source.cstr_, kCStrSize);
-  }
-  return *this;
-}
-
-auto ObjectId::operator=(ObjectId&& source) -> ObjectId& {
-  uuid_ = std::move(source.uuid_);
-  if (cstr_ != nullptr) {
-    delete[] cstr_;
-    cstr_ = nullptr;
-  }
-  return *this;
-}
-
-auto ObjectId::cstr() -> const char* {
-  if (cstr_ == nullptr) {
-    cstr_ = new char[kCStrSize];
-    uuid_unparse(reinterpret_cast<uint8_t*>(uuid_.data()), cstr_);
-  }
-  return cstr_;
+  return result;
 }
 
 auto ObjectId::IsNull() const noexcept -> bool {
-  return uuid_is_null(reinterpret_cast<const uint8_t*>(uuid_.data())) == 1;
+  return uuid_is_null(Value().data()) == 1;
 }
 
 auto operator==(const ObjectId& lhs, const ObjectId& rhs) -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) == 0;
+  return uuid_compare(lhs.value_.data(), rhs.value_.data()) == 0;
 }
 
 auto operator!=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) != 0;
+  return uuid_compare(lhs.value_.data(), rhs.value_.data()) != 0;
 }
 
 auto operator<(const ObjectId& lhs, const ObjectId& rhs) -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) < 0;
+  return uuid_compare(lhs.value_.data(), rhs.value_.data()) < 0;
 }
 
 auto operator>(const ObjectId& lhs, const ObjectId& rhs) -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) > 0;
+  return uuid_compare(lhs.value_.data(), rhs.value_.data()) > 0;
 }
 
 auto operator<=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) <= 0;
+  return uuid_compare(lhs.value_.data(), rhs.value_.data()) <= 0;
 }
 
 auto operator>=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
-  return uuid_compare(reinterpret_cast<const uint8_t*>(lhs.uuid_.data()),
-                      reinterpret_cast<const uint8_t*>(rhs.uuid_.data())) >= 0;
+  return uuid_compare(lhs.value_.data(), rhs.value_.data()) >= 0;
 }
 }  // namespace afengine::foundation::internal

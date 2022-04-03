@@ -2,47 +2,26 @@
 #define AFENGINE_FOUNDATION_INTERNAL_OBJECTID_IMPL_H
 
 #include <afengine/export-macros.h>
+#include <afengine/foundation/object/id/internal/ObjectIdTrait.h>
 #include <afengine/foundation/string.h>
-#include <afengine/foundation/types.h>
+#include <afengine/foundation/traits/Inherits.h>
 
 #include <array>
 
 namespace afengine::foundation::internal {
-class AFENGINE_EXPORT ObjectId {
-  public:
-    AFENGINE_EXPORT friend auto operator==(const ObjectId& lhs,
-                                           const ObjectId& rhs) -> bool;
-    AFENGINE_EXPORT friend auto operator!=(const ObjectId& lhs,
-                                           const ObjectId& rhs) -> bool;
-    AFENGINE_EXPORT friend auto operator<(const ObjectId& lhs,
-                                          const ObjectId& rhs) -> bool;
-    AFENGINE_EXPORT friend auto operator<=(const ObjectId& lhs,
-                                           const ObjectId& rhs) -> bool;
-    AFENGINE_EXPORT friend auto operator>(const ObjectId& lhs,
-                                          const ObjectId& rhs) -> bool;
-    AFENGINE_EXPORT friend auto operator>=(const ObjectId& lhs,
-                                           const ObjectId& rhs) -> bool;
 
-    ~ObjectId();
-
-    operator String();
-    operator StringView();
-    auto operator=(const ObjectId& source) -> ObjectId&;
-    auto operator=(ObjectId&& source) -> ObjectId&;
-
-    auto IsNull() const noexcept -> bool;
-
+class AFENGINE_EXPORT ObjectId
+    : public Inherits<ObjectId, ObjectIdTrait<ObjectId, std::array<uint8_t, kObjectIdValueMaxSize>>> {
   protected:
-    ObjectId();
-    ObjectId(const ObjectId& source);
-    ObjectId(ObjectId&& source) noexcept;
-    explicit ObjectId(StringView value);
+    static auto Parse(StringView value) -> ValueType;
+    static auto Generate() -> ValueType;
 
-    auto cstr() -> const String::pointer;
+  public:
+    using Constructors::Inherits;
 
-  private:
-    std::array<byte, 16> uuid_{};
-    String::pointer cstr_{nullptr};
+    explicit operator String() const;
+
+    [[nodiscard]] auto IsNull() const noexcept -> bool override;
 };
 }  // namespace afengine::foundation::internal
 

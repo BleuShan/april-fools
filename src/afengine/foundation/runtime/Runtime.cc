@@ -1,23 +1,14 @@
 #include <afengine/foundation/runtime/Runtime.h>
-#include <folly/Singleton.h>
 
 using afengine::foundation::Runtime;
+using afengine::foundation::internal::DefaultRuntimeSingletonTag;
 using folly::Singleton;
 
-static auto DefaultRuntime =
-    Singleton<Runtime>{Runtime::create, Runtime::teardown}.shouldEagerInit();
+[[maybe_unused]] const auto kDefaultRuntime =
+    Singleton<Runtime, DefaultRuntimeSingletonTag, DefaultRuntimeSingletonTag>{
+        Runtime::Create, Runtime::Teardown}
+        .shouldEagerInit();
 
-auto Runtime::acquire(AcquireCallback callback) -> bool {
-  auto instance = DefaultRuntime.try_get();
-  if (instance == nullptr) {
-    return false;
-  }
-
-  callback(*instance);
-
-  return true;
-}
-
-auto Runtime::shutdown() -> Runtime& {
+auto Runtime::Shutdown() -> Runtime& {
   return *this;
 }

@@ -11,6 +11,7 @@ library_target(
   Folly::folly
   Folly::folly_deps
   absl::btree
+  absl::cord
   imgui::imgui
 )
 
@@ -21,8 +22,6 @@ target_link_libraries(
   "$<$<IN_LIST:windows,${VCPKG_MANIFEST_FEATURES}>:Microsoft::DirectX-Headers>"
   "$<$<IN_LIST:windows,${VCPKG_MANIFEST_FEATURES}>:Microsoft::DirectXMath>"
 )
-
-
 
 
 set_target_properties(

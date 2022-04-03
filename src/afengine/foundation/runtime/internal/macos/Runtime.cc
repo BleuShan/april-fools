@@ -2,10 +2,10 @@
 
 using afengine::foundation::Runtime;
 
-auto Runtime::create() -> Runtime* {
+auto Runtime::Create() -> Runtime* {
   return new Runtime();
 }
 
-auto Runtime::teardown(Runtime* runtime) -> void {
-  runtime->shutdown();
+auto Runtime::Teardown(Runtime* runtime) -> void {
+  runtime->Shutdown();
 }

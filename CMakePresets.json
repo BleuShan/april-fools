@@ -10,7 +10,13 @@
       "binaryDir": "${sourceDir}/build",
       "toolchainFile": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
       "installDir": "${sourceDir}/dist",
-      "hidden": true
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": {
+          "type": "boolean",
+          "value": true
+        }
+      }
     },
     {
       "name": "dynamic",

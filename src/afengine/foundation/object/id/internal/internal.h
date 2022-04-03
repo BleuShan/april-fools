@@ -1,6 +1,7 @@
-#ifndef AFENGINE_FOUNDATION_INTERNAL_OBJECTID_H
-#define AFENGINE_FOUNDATION_INTERNAL_OBJECTID_H
+#ifndef AFENGINE_FOUNDATION_OBJECT_ID_INTERNAL_H
+#define AFENGINE_FOUNDATION_OBJECT_ID_INTERNAL_H
 
+#include <afengine/foundation/object/id/internal/ObjectIdTrait.h>
 #include <afengine/targets.h>
 
 #if TARGET_OS_WINDOWS

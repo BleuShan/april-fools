@@ -10,13 +10,15 @@ namespace afengine::foundation {
  * The common class for all objects.
  */
 class AFENGINE_EXPORT Object {
- public:
-  auto id() const -> ObjectId { return id_; }
+  public:
+    [[nodiscard]] auto id() const -> ObjectId { return id_; }
 
- protected:
-  Object() = default;
+  protected:
+    explicit Object(const ObjectId& id) noexcept
+        : id_{std::forward<decltype(id)>(id)} {};
 
-  ObjectId id_;
+  private:
+    ObjectId id_;
 };
 
 }  // namespace afengine::foundation

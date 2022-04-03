@@ -1,6 +1,7 @@
 add_sources(
   PUBLIC
-  ObjectId.h
+  ObjectIdTrait.h
+  internal.h
 )
 
 string(TOLOWER ${TARGET_OS} directory)
