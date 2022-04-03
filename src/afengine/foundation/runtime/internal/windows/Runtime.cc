@@ -9,6 +9,6 @@ auto Runtime::Create() -> Runtime* {
 }
 
 auto Runtime::Teardown(Runtime* runtime) -> void {
-  runtime->shutdown();
+  runtime->Shutdown();
   winrt::uninit_apartment();
 }

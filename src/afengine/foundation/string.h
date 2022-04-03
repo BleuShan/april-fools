@@ -4,6 +4,8 @@
 #include <folly/FixedString.h>
 
 #include <string>
+#include <cctype>
+#include <cwctype>
 
 namespace afengine{
 using namespace std::literals;

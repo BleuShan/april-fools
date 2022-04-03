@@ -7,16 +7,21 @@
 #include <afengine/foundation/traits/Inherits.h>
 #include <winrt/Windows.Foundation.h>
 
+#include <functional>
+
 namespace afengine::foundation::internal {
 
 class AFENGINE_EXPORT ObjectId
     : public Inherits<ObjectId, ObjectIdTrait<ObjectId, winrt::guid>> {
   public:
     using Constructors::Inherits;
-
     explicit operator String() const;
 
     [[nodiscard]] auto IsNull() const noexcept -> bool override;
+
+  protected:
+    static auto Parse(StringView value) -> ValueType;
+    static auto Generate() -> ValueType;
 };
 
 }  // namespace afengine::foundation::internal

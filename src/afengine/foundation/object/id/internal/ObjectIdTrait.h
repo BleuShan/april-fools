@@ -3,10 +3,19 @@
 
 #include <afengine/export-macros.h>
 #include <afengine/foundation/types.h>
+#include <algorithm>
+#include <array>
+#include <numeric>
 
 namespace afengine::foundation::internal {
 
 constexpr size_t kObjectIdValueMaxSize = 16UL * sizeof(byte);
+constexpr auto kUuidStringSegmentLengths =
+    std::array<size_t, 5>{8, 4, 4, 4, 12};
+
+constexpr auto kShortUuidStringLen = std::accumulate(
+    kUuidStringSegmentLengths.begin(), kUuidStringSegmentLengths.end(), 0ULL);
+constexpr auto kShortUuidStringSize = kShortUuidStringLen + 1;
 
 template <typename Self, typename ValueTypeT>
 class ObjectIdTrait {

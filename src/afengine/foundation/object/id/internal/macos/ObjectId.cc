@@ -9,11 +9,6 @@ namespace afengine::foundation::internal {
 
 constexpr auto kCStrSize = sizeof(uuid_string_t);
 constexpr auto kCStrLen = kCStrSize - 1;
-constexpr auto kUuidStringSegmentLengths =
-    std::array<size_t, 5>{8, 4, 4, 4, 12};
-constexpr auto kShortUuidStringLen = std::accumulate(
-    kUuidStringSegmentLengths.begin(), kUuidStringSegmentLengths.end(), 0UL);
-constexpr auto kShortUuidStringSize = kShortUuidStringLen + 1;
 
 ObjectId::operator String() const {
   std::array<String::value_type, kCStrSize> buffer{};
@@ -33,7 +28,7 @@ auto ObjectId::Parse(StringView value) -> ValueType {
   if (!success && (sourceSize == kShortUuidStringLen ||
                    sourceSize == kShortUuidStringSize)) {
     std::array<StringView::value_type, kCStrSize> buffer{};
-    auto reader = value.cbegin();  // NOLINT()
+    auto reader = value.cbegin();
     auto writer = buffer.begin();
     auto writerEnd = buffer.cend();
     auto readerEnd = value.cend();
