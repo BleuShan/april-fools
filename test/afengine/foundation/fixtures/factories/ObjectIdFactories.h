@@ -9,63 +9,72 @@
 namespace afengine::foundation::fixtures::factories {
 class ObjectIdTestFactory : public ConstEnabledFactory<ObjectId> {
   public:
-#if WIN32 && UNICODE
+    #if WIN32 && UNICODE
     static constexpr StringView kStringViewValue{
         L"ce737914-d2c3-4ce6-951f-8c931161461d"};
     static constexpr StringView kShortStringViewValue{
         L"ce737914d2c34ce6951f8c931161461d"};
-#else
+    #else
     static constexpr StringView kStringViewValue{
         "ce737914-d2c3-4ce6-951f-8c931161461d"};
     static constexpr StringView kShortStringViewValue{
         "ce737914d2c34ce6951f8c931161461d"};
-#endif
+    #endif
 };
 
-class DefaultObjectIdConstructor : public ObjectIdTestFactory {
+class GenerateObjectId : public ObjectIdTestFactory {
   public:
     using ParameterType [[maybe_unused]] = void;
-    auto Create() const -> ObjectId override { return ObjectId::Generate(); }
+
+    [[nodiscard]] auto Create() const -> ObjectId override {
+      return ObjectId::Generate();
+    }
 };
 
-class ObjectIdStringConstructor : public ObjectIdTestFactory {
+class ParseObjectIdFromString : public ObjectIdTestFactory {
   public:
     using ParameterType [[maybe_unused]] = String;
-    auto Create() const -> ObjectId override {
-      return ObjectId::Parse(static_cast<String>(kStringViewValue));
+
+    [[nodiscard]] auto Create() const -> ObjectId override {
+      const String value{kStringViewValue};
+      return ObjectId::Parse(value);
     }
 };
 
-class ObjectIdStringViewConstructor : public ObjectIdTestFactory {
+class ParseObjectIdFromStringView : public ObjectIdTestFactory {
   public:
     using ParameterType [[maybe_unused]] = StringView;
-    auto Create() const -> ObjectId override {
-      return ObjectId::Parse(static_cast<StringView>(kStringViewValue));
+
+    [[nodiscard]] auto Create() const -> ObjectId override {
+      return ObjectId::Parse(kStringViewValue);
     }
 };
 
-class ObjectIdShortStringConstructor : public ObjectIdTestFactory {
+class ParseObjectIdFromShortString : public ObjectIdTestFactory {
   public:
     using ParameterType [[maybe_unused]] = StringView;
-    auto Create() const -> ObjectId override {
-      return ObjectId::Parse(static_cast<String>(kStringViewValue));
+
+    [[nodiscard]] auto Create() const -> ObjectId override {
+      const String value{kShortStringViewValue};
+      return ObjectId::Parse(value);
     }
 };
 
-class ObjectIdShortStringViewConstructor : public ObjectIdTestFactory {
+class ParseObjectIdFromShortStringView : public ObjectIdTestFactory {
   public:
     using ParameterType [[maybe_unused]] = StringView;
-    auto Create() const -> ObjectId override {
+
+    [[nodiscard]] auto Create() const -> ObjectId override {
       return ObjectId::Parse(kShortStringViewValue);
     }
 };
 
 using ObjectIdFactories =
-    testing::Types<DefaultObjectIdConstructor, ObjectIdStringConstructor,
-                   ObjectIdStringViewConstructor,
-                   ObjectIdShortStringConstructor,
-                   ObjectIdShortStringViewConstructor>;
+testing::Types<GenerateObjectId, ParseObjectIdFromString,
+               ParseObjectIdFromStringView,
+               ParseObjectIdFromShortString,
+               ParseObjectIdFromShortStringView>;
 
-}  // namespace afengine::foundation::fixtures::factories
+} // namespace afengine::foundation::fixtures::factories
 
 #endif

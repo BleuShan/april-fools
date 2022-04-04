@@ -1,5 +1,6 @@
 add_sources(
-  PRIVATE
+  PUBLIC
   ObjectId.h
+  PRIVATE
   ObjectId.cc
 )

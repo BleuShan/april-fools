@@ -12,9 +12,6 @@
       "features": [ "cxx17" ]
     },
     {
-      "name": "fmt"
-    },
-    {
       "name": "imgui",
       "features": ["docking-experimental", "freetype"]
     }

@@ -2,7 +2,8 @@ BasedOnStyle: Google
 ColumnLimit: 80
 Standard: c++20
 
-
+DeriveLineEnding: true
 IndentPPDirectives: BeforeHash
 AllowShortFunctionsOnASingleLine: Inline
 IndentAccessModifiers: true
+UseCLRF: false

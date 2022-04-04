@@ -13,6 +13,7 @@ class Factory {
     using ValueType = OutputType;
 
     [[nodiscard]] virtual auto Create() -> ValueType = 0;
+    virtual ~Factory() = default;
 };
 
 template <typename OutputType>
@@ -21,6 +22,7 @@ class ConstEnabledFactory {
     using ValueType = OutputType;
 
     [[nodiscard]] virtual auto Create() const -> ValueType = 0;
+    virtual ~ConstEnabledFactory() = default;
 };
 
 }  // namespace afengine::foundation

@@ -29,9 +29,10 @@ auto ObjectId::Parse(StringView value) -> ValueType {
   if (sourceSize == kShortUuidStringLen || sourceSize == kShortUuidStringSize) {
     std::array<StringView::value_type, kCStrSize> buffer{};
     auto reader = value.cbegin();
+    auto readerEnd = value.cend();
+
     auto writer = buffer.begin();
     auto writerEnd = buffer.cend();
-    auto readerEnd = value.cend();
 
     for (auto&& size : kUuidStringSegmentLengths) {
       writer = std::copy_n(reader, size, writer);
@@ -91,4 +92,4 @@ auto operator>=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
   return !(lhs.value_ < rhs.value_) &&
          !GuidHelper::Equals(lhs.value_, rhs.value_);
 }
-}  // namespace afengine::foundation::internal
+} // namespace afengine::foundation::internal

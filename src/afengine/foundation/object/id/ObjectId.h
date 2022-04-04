@@ -16,12 +16,12 @@ class AFENGINE_EXPORT ObjectId final
     using Constructors::Inherits;
 
     static auto Parse(StringView value) -> ObjectId {
-      auto result = Base::Parse(value);
+      const auto result = Base::Parse(value);
       return ObjectId{result};
     }
 
     static auto Generate() -> ObjectId {
-      auto result = Base::Generate();
+      const auto result = Base::Generate();
       return ObjectId{result};
     }
 };
