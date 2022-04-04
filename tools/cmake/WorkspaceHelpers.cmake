@@ -442,7 +442,7 @@ function(test_target name)
   target_include_directories(${target_name}
     PRIVATE
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>
-    )
+  )
   workspace_helpers_set_target_cxx_properties(${target_name})
   workspace_helpers_set_target_output_directory_properties(${target_name})
   workspace_helpers_set_target_pdb_properties(${target_name})

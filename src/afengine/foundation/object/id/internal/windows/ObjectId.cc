@@ -1,6 +1,5 @@
 #include <afengine/export-macros.h>
 #include <afengine/foundation/object/id/internal/internal.h>
-#include <fmt/format.h>
 
 using winrt::Windows::Foundation::GuidHelper;
 
@@ -9,14 +8,16 @@ namespace afengine::foundation::internal {
 #if UNICODE
 constexpr StringView kGuidFormat =
     L"{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}";
+constexpr auto kDashChar = L'-';
 #else
 constexpr StringView kGuidFormat =
     "{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}";
+constexpr auto kDashChar = '-';
 #endif
 
-constexpr auto kCStrLen =
-    kShortUuidStringLen + kUuidStringSegmentLengths.size();
-constexpr auto kCStrSize = kCStrLen + 1;
+constexpr auto kCStrSize =
+    kShortUuidStringLen + kUuidStringSegmentLengths.size() - 1;
+constexpr auto kCStrLen = kCStrSize - 1;
 
 auto ObjectId::Parse(StringView value) -> ValueType {
   auto sourceSize = value.size();
@@ -39,7 +40,7 @@ auto ObjectId::Parse(StringView value) -> ValueType {
       reader = std::ranges::next(reader, size, readerEnd);
 
       if (reader != readerEnd && writer != writerEnd) {
-        *writer = '-';
+        *writer = kDashChar;
         writer = std::ranges::next(writer, 1, writerEnd);
       }
     }
