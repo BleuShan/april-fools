@@ -1,6 +1,7 @@
 find_package(Folly CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(absl CONFIG REQUIRED)
+find_package(mimalloc CONFIG REQUIRED)
 find_package(directX-headers CONFIG)
 find_package(directxmath CONFIG)
 
@@ -13,6 +14,7 @@ library_target(
   absl::btree
   absl::cord
   imgui::imgui
+  mimalloc
 )
 
 target_link_libraries(

@@ -1,8 +1,8 @@
 #ifndef AFENGINE_FOUNDATION_OBJECTID_TESTS_H
 #define AFENGINE_FOUNDATION_OBJECTID_TESTS_H
 
-#include <afengine/foundation/concepts.h>
 #include <afengine/foundation/object/id/ObjectId.h>
+#include <afengine/foundation/types/types.h>
 #include <gtest/gtest.h>
 
 #include <memory>

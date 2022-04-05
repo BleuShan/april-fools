@@ -7,19 +7,16 @@
 
 namespace afengine::foundation::internal {
 
-constexpr auto kCStrSize = sizeof(uuid_string_t);
-constexpr auto kCStrLen = kCStrSize - 1;
-
-ObjectId::operator String() const {
+auto ObjectIdHooks::ToString(ValueTypeInfo::const_reference value) -> String {
   std::array<String::value_type, kCStrSize> buffer{};
-  uuid_unparse(Value().data(), buffer.data());
+  uuid_unparse(value.data(), buffer.data());
   return String{buffer.data()};
 }
 
-auto ObjectId::Parse(StringView value) -> ValueType {
+auto ObjectIdHooks::Parse(StringView value) -> ValueTypeInfo::value_type {
   auto sourceSize = value.size();
   bool success = false;
-  ValueType result{};
+  ValueTypeInfo::value_type result{};
   if (sourceSize == kCStrSize || sourceSize == kCStrLen) {
     String data{value};
     success = uuid_parse(data.data(), result.data()) == 0;
@@ -54,38 +51,57 @@ auto ObjectId::Parse(StringView value) -> ValueType {
   return result;
 }
 
-auto ObjectId::Generate() -> ValueType {
-  ValueType result{};
+auto ObjectIdHooks::Generate() -> ValueTypeInfo::value_type {
+  ValueTypeInfo::value_type result{};
   uuid_generate_random(result.data());
 
   return result;
 }
 
-auto ObjectId::IsNull() const noexcept -> bool {
-  return uuid_is_null(Value().data()) == 1;
+auto ObjectIdHooks::IsNull(ValueTypeInfo::const_reference value) noexcept
+    -> bool {
+  return uuid_is_null(value.data()) == 1;
 }
 
-auto operator==(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator==(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return uuid_compare(lhs.value_.data(), rhs.value_.data()) == 0;
 }
 
-auto operator!=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator!=(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return uuid_compare(lhs.value_.data(), rhs.value_.data()) != 0;
 }
 
-auto operator<(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator<(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return uuid_compare(lhs.value_.data(), rhs.value_.data()) < 0;
 }
 
-auto operator>(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator>(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return uuid_compare(lhs.value_.data(), rhs.value_.data()) > 0;
 }
 
-auto operator<=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator<=(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return uuid_compare(lhs.value_.data(), rhs.value_.data()) <= 0;
 }
 
-auto operator>=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator>=(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return uuid_compare(lhs.value_.data(), rhs.value_.data()) >= 0;
 }
 }  // namespace afengine::foundation::internal

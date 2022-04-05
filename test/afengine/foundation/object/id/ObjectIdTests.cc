@@ -27,7 +27,8 @@ TYPED_TEST_P(ObjectIdTests, StringConversion) {
   ASSERT_FALSE(IsEmptyOrBlank(stringValue))
       << "Should return a non empty string.";
 
-  if constexpr (std::is_same_v<typename TypeParam::ParameterType, String>) {
+  if constexpr (std::convertible_to<typename TypeParam::ParameterType,
+                                    StringView>) {
     const String expected{
         fixtures::factories::ObjectIdTestFactory::kStringViewValue};
     ASSERT_EQ(stringValue, expected) << "Should have the same value.";
@@ -38,4 +39,4 @@ REGISTER_TYPED_TEST_SUITE_P(ObjectIdTests, Constructor, StringConversion);
 
 INSTANTIATE_TYPED_TEST_SUITE_P(WithObjectIdFactories, ObjectIdTests,
                                fixtures::factories::ObjectIdFactories);
-} // namespace afengine::foundation
+}  // namespace afengine::foundation

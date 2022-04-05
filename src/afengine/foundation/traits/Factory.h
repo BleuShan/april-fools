@@ -1,16 +1,20 @@
 #ifndef AFENGINE_FOUNDATION_TRAITS_ABSTRACT_FACTORY_H
 #define AFENGINE_FOUNDATION_TRAITS_ABSTRACT_FACTORY_H
 
-#include <afengine/foundation/concepts.h>
-
 #include <stdexcept>
+
+#include "afengine/foundation/types/concepts/concepts.h"
 
 namespace afengine::foundation {
 
-template <typename OutputType>
+template <typename ValueType>
 class Factory {
   public:
-    using ValueType = OutputType;
+    using ValueTypeInfo = TypeInfo<ValueType>;
+    using typename ValueTypeInfo::const_reference;
+    using typename ValueTypeInfo::forwarding_reference;
+    using typename ValueTypeInfo::reference;
+    using typename ValueTypeInfo::value_type;
 
     [[nodiscard]] virtual auto Create() -> ValueType = 0;
     virtual ~Factory() = default;

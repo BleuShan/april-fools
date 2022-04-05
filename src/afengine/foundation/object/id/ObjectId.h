@@ -3,28 +3,15 @@
 
 #include <afengine/export-macros.h>
 #include <afengine/foundation/object/id/internal/internal.h>
-#include <afengine/foundation/string.h>
+#include <afengine/foundation/types/string.h>
 
 namespace afengine::foundation {
 /**
  * A unique identifier for an object
  *
  */
-class AFENGINE_EXPORT ObjectId final
-    : public Inherits<ObjectId, internal::ObjectId> {
-  public:
-    using Constructors::Inherits;
-
-    static auto Parse(StringView value) -> ObjectId {
-      const auto result = Base::Parse(value);
-      return ObjectId{result};
-    }
-
-    static auto Generate() -> ObjectId {
-      const auto result = Base::Generate();
-      return ObjectId{result};
-    }
-};
+using ObjectId = internal::BasicObjectId<internal::ObjectIdHooks::ValueTypeInfo,
+                                         internal::ObjectIdHooks>;
 
 }  // namespace afengine::foundation
 

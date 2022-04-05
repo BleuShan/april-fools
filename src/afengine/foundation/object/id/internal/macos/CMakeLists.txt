@@ -1,6 +1,6 @@
 add_sources(
   PUBLIC
-  ObjectId.h
+  ObjectIdHooks.h
   PRIVATE
-  ObjectId.cc
+  ObjectIdHooks.cc
 )

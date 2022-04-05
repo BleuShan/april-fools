@@ -1,16 +1,11 @@
-#ifndef AFENGINE_FOUNDATION_CONCEPTS_H
-#define AFENGINE_FOUNDATION_CONCEPTS_H
+#ifndef AFENGINE_FOUNDATION_TYPES_CONCEPTS_FACTORY_H
+#define AFENGINE_FOUNDATION_TYPES_CONCEPTS_FACTORY_H
+
+#include <afengine/foundation/types/concepts/ClassTypes.h>
 
 #include <concepts>
 
 namespace afengine::foundation {
-
-template <typename Type>
-concept ClassOrEnum =
-    std::is_class_v<Type> || std::is_union_v<Type> || std::is_enum_v<Type>;
-
-template <typename Type>
-concept ClassLike = std::is_class_v<Type>;
 
 template <typename Fn, typename Output, typename... Args>
 concept InvocableFactoryOf = std::invocable<Fn, Args...> &&

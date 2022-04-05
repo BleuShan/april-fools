@@ -9,17 +9,17 @@
 namespace afengine::foundation::fixtures::factories {
 class ObjectIdTestFactory : public ConstEnabledFactory<ObjectId> {
   public:
-    #if WIN32 && UNICODE
+#if WIN32 && UNICODE
     static constexpr StringView kStringViewValue{
         L"ce737914-d2c3-4ce6-951f-8c931161461d"};
     static constexpr StringView kShortStringViewValue{
         L"ce737914d2c34ce6951f8c931161461d"};
-    #else
+#else
     static constexpr StringView kStringViewValue{
         "ce737914-d2c3-4ce6-951f-8c931161461d"};
     static constexpr StringView kShortStringViewValue{
         "ce737914d2c34ce6951f8c931161461d"};
-    #endif
+#endif
 };
 
 class GenerateObjectId : public ObjectIdTestFactory {
@@ -70,11 +70,10 @@ class ParseObjectIdFromShortStringView : public ObjectIdTestFactory {
 };
 
 using ObjectIdFactories =
-testing::Types<GenerateObjectId, ParseObjectIdFromString,
-               ParseObjectIdFromStringView,
-               ParseObjectIdFromShortString,
-               ParseObjectIdFromShortStringView>;
+    testing::Types<GenerateObjectId, ParseObjectIdFromString,
+                   ParseObjectIdFromStringView, ParseObjectIdFromShortString,
+                   ParseObjectIdFromShortStringView>;
 
-} // namespace afengine::foundation::fixtures::factories
+}  // namespace afengine::foundation::fixtures::factories
 
 #endif

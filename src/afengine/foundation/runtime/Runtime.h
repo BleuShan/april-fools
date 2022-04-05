@@ -16,16 +16,29 @@ class AFENGINE_EXPORT Runtime final {
     template <typename ReturnType>
     using AcquireCallback = std::function<ReturnType(const Runtime&)>;
 
+    template <typename Tag = internal::DefaultRuntimeSingletonTag,
+              typename VaultTag = Tag>
+    static auto Acquire(const AcquireCallback<void>& callback) -> bool {
+      auto instance = folly::Singleton<Runtime, Tag, VaultTag>::try_get();
+      if (instance == nullptr) {
+        return false;
+      }
+
+      callback(*instance);
+      return true;
+    }
+
     template <typename ReturnType,
               typename Tag = internal::DefaultRuntimeSingletonTag,
               typename VaultTag = Tag>
-    static auto Acquire(const AcquireCallback<ReturnType>& callback)
+    requires(!std::is_void_v<ReturnType>) static auto Acquire(
+        const AcquireCallback<ReturnType>& callback)
         -> std::optional<ReturnType> {
       using ResultType = std::optional<ReturnType>;
 
       auto instance = folly::Singleton<Runtime, Tag, VaultTag>::try_get();
       if (instance == nullptr) {
-        return ResultType {};
+        return std::nullopt;
       }
 
       auto result = callback(*instance);

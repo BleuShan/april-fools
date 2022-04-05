@@ -5,26 +5,12 @@ using winrt::Windows::Foundation::GuidHelper;
 
 namespace afengine::foundation::internal {
 
-#if UNICODE
-constexpr StringView kGuidFormat =
-    L"{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}";
-constexpr auto kDashChar = L'-';
-#else
-constexpr StringView kGuidFormat =
-    "{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}";
-constexpr auto kDashChar = '-';
-#endif
-
-constexpr auto kCStrSize =
-    kShortUuidStringLen + kUuidStringSegmentLengths.size() - 1;
-constexpr auto kCStrLen = kCStrSize - 1;
-
-auto ObjectId::Parse(StringView value) -> ValueType {
+auto ObjectIdHooks::Parse(StringView value) -> ValueTypeInfo::value_type {
   auto sourceSize = value.size();
 
   if (sourceSize == kCStrSize || sourceSize == kCStrLen) {
     const String data{value};
-    return ValueType{data};
+    return ValueTypeInfo::value_type{data};
   }
 
   if (sourceSize == kShortUuidStringLen || sourceSize == kShortUuidStringSize) {
@@ -45,52 +31,67 @@ auto ObjectId::Parse(StringView value) -> ValueType {
       }
     }
     StringView result{buffer};
-    return ValueType{result};
+    return ValueTypeInfo::value_type{result};
   }
 
   throw std::invalid_argument("received an invalid uuid string");
 }
 
-auto ObjectId::Generate() -> ValueType {
+auto ObjectIdHooks::Generate() -> ValueTypeInfo::value_type {
   return GuidHelper::CreateNewGuid();
 }
 
-ObjectId::operator String() const {
-  auto& value = Value();
-  auto result = std::format(kGuidFormat, value.Data1, value.Data2, value.Data3,
+auto ObjectIdHooks::ToString(ValueTypeInfo::const_reference value) -> String {
+  return std::format(kGuidFormat, value.Data1, value.Data2, value.Data3,
                             value.Data4[0], value.Data4[1], value.Data4[2],
                             value.Data4[3], value.Data4[4], value.Data4[5],
                             value.Data4[6], value.Data4[7]);
-
-  return result;
 }
 
-auto ObjectId::IsNull() const noexcept -> bool {
+auto ObjectIdHooks::IsNull(ValueTypeInfo::const_reference value) noexcept
   return GuidHelper::Equals(Value(), GuidHelper::Empty());
 }
 
-auto operator==(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator==(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return GuidHelper::Equals(lhs.value_, rhs.value_);
 }
 
-auto operator!=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator!=(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return !GuidHelper::Equals(lhs.value_, rhs.value_);
 }
 
-auto operator<(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator<(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return lhs.value_ < rhs.value_;
 }
 
-auto operator<=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator<=(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return lhs.value_ < rhs.value_ || GuidHelper::Equals(lhs.value_, rhs.value_);
 }
 
-auto operator>(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator>(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return !(lhs.value_ < rhs.value_);
 }
 
-auto operator>=(const ObjectId& lhs, const ObjectId& rhs) -> bool {
+auto operator>=(
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
+    const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
+    -> bool {
   return !(lhs.value_ < rhs.value_) &&
          !GuidHelper::Equals(lhs.value_, rhs.value_);
 }
-} // namespace afengine::foundation::internal
+}  // namespace afengine::foundation::internal

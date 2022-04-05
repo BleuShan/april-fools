@@ -1,5 +1,6 @@
 add_sources(
   PUBLIC
-  traits.h
+  concepts.h
   Factory.h
+  ClassTypes.h
 )

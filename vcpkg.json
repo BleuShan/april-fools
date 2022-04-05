@@ -8,8 +8,11 @@
       "name": "folly"
     },
     {
+      "name": "mimalloc"
+    },
+    {
       "name": "abseil",
-      "features": [ "cxx17" ]
+      "features": ["cxx17"]
     },
     {
       "name": "imgui",
@@ -39,7 +42,7 @@
       "dependencies": [
         {
           "name": "imgui",
-          "features": [ "win32-binding", "dx12-binding" ]
+          "features": ["win32-binding", "dx12-binding"]
         },
         {
           "name": "directx-headers"

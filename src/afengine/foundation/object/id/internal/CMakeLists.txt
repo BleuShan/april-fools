@@ -1,6 +1,7 @@
 add_sources(
   PUBLIC
-  ObjectIdTrait.h
+  BasicObjectId.h
+  constants.h
   internal.h
 )
 

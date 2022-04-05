@@ -5,7 +5,8 @@
 #include <afengine/export-macros.h>
 #include <afengine/foundation/object/id/ObjectId.h>
 #include <afengine/foundation/object/pool/internal/ObjectPoolAllocator.h>
-#include <afengine/foundation/types.h>
+
+#include "afengine/foundation/types/types.h"
 
 namespace afengine::foundation {
 
