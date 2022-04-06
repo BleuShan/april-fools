@@ -233,5 +233,25 @@
       "configurePreset": "VS2022-x64-windows",
       "inheritConfigureEnvironment": true
     }
+  ],
+  "testPresets": [
+    {
+      "name": "mimalloc",
+      "environment": {
+        "MIMALLOC_SHOW_STATS": {}
+      },
+      "hidden": true
+    },
+    {
+      "name": "Ninja-x64-macOS-dynamic",
+      "inheritConfigureEnvironment": true,
+      "configurePreset": "Ninja-x64-macOS-dynamic"
+    },
+    {
+      "name": "Ninja-x64-macOS-dynamic-mimalloc",
+      "inheritConfigureEnvironment": true,
+      "configurePreset": "Ninja-x64-macOS-dynamic",
+      "inherits": ["Ninja-x64-macOS-dynamic", "mimalloc"]
+    }
   ]
 }

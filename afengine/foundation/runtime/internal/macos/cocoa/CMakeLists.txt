@@ -1,0 +1,9 @@
+add_sources(
+  PRIVATE
+  AFEngineApplication.h
+  AFEngineApplication.mm
+  AFEngineApplicationDelegate.h
+  AFEngineApplicationDelegate.mm
+  cocoa.h
+  cocoa.mm
+)

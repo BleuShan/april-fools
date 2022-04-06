@@ -14,12 +14,6 @@ project(AprilsFools
 include(WorkspaceOptions)
 
 setup_msvc()
-add_subdirectory(src)
+add_subdirectory(afengine)
+add_subdirectory(afeditor)
 
-if (BUILD_TESTING)
-  enable_testing()
-  include(Dart)
-  include(GoogleTest)
-  find_package(GTest CONFIG REQUIRED)
-  add_subdirectory(test)
-endif ()

@@ -42,11 +42,10 @@ function(make_cmake_variable_name)
   set(${varname} ${varvalue} PARENT_SCOPE)
 endfunction()
 
-function(target_cmake_binary_include_path variable)
+function(make_cmake_binary_path variable)
   cmake_path(
     APPEND
     CMAKE_BINARY_DIR
-    include
     ${ARGN}
     OUTPUT_VARIABLE value
   )

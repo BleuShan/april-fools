@@ -1,8 +1,0 @@
-#ifndef AFENGINE_FOUNDATION_MEMORY_MEMORY_H
-#define AFENGINE_FOUNDATION_MEMORY_MEMORY_H
-
-#include <mimalloc.h>
-
-#include <memory>
-
-#endif  // SRC_AFENGINE_FOUNDATION_MEMORY_MEMORY_H

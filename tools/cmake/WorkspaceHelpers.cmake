@@ -101,7 +101,6 @@ function(workspace_helpers_set_target_version_properties name)
   set_target_properties(${name} PROPERTIES ${versions})
 endfunction()
 
-
 function(workspace_helpers_set_target_cxx_properties name)
   if (MSVC)
     set(standard 23)
@@ -119,12 +118,7 @@ function(workspace_helpers_set_target_cxx_properties name)
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
     VISIBILITY_PRESET hidden
-  )
-
-  target_link_libraries(
-    ${name}
-    PRIVATE
-    "$<$<BOOL:${APPLE}>:$<IF:$<STREQUAL:${TARGET_OS},macOS>,-framework Cocoa,-framework UIKit>>"
+    $<$<BOOL:${APPLE}>:OBJC_STANDARD;11;OBJCXX_STANDARD;23>
   )
 
   target_compile_definitions(
@@ -140,13 +134,13 @@ function(workspace_helpers_set_target_cxx_properties name)
 
   target_include_directories(
     ${name}
+    SYSTEM
     INTERFACE
-    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
+    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
     PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated>
-    PRIVATE
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
+    "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>"
+    "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated/include>"
   )
 endfunction()
 
@@ -346,6 +340,7 @@ function(library_target name)
   add_library(${name} ${type} ${sources})
   add_library(${CMAKE_PROJECT_NAME}::${name} ALIAS ${name})
 
+  workspace_helpers_set_target_properties(${name})
   set(CURRENT_TARGET ${name} PARENT_SCOPE)
   if (BUILD_SHARED_LIBS OR type STREQUAL "SHARED")
     string(TOUPPER "${name}_exports" define_symbol)
@@ -363,26 +358,9 @@ function(library_target name)
     )
   endif ()
 
-  workspace_helpers_set_target_properties(${name})
-  string(TOUPPER ${name}_ prefix_name)
-  target_cmake_binary_include_path(
-    export_filename
-    ${name}
-    export-macros.h
-  )
-  generate_export_header(
-    ${name}
-    BASE_NAME ""
-    PREFIX_NAME ${prefix_name}
-    INCLUDE_GUARD_NAME ${prefix_name}EXPORT_MACROS_H
-    DEPRECATED_MACRO_NAME DEPRECATED
-    EXPORT_FILE_NAME ${export_filename}
-    EXPORT_MACRO_NAME EXPORT
-    NO_EXPORT_MACRO_NAME NO_EXPORT
-    STATIC_DEFINE STATIC
-  )
 
   workspace_helpers_set_target_link_libraries(${name})
+  generate_target_files(TARGET ${name} LIBRARY)
 endfunction()
 
 
@@ -406,7 +384,6 @@ function(executable_target name)
   workspace_helpers_set_target_properties(${name})
   workspace_helpers_set_target_link_libraries(${name})
 endfunction()
-
 
 function(test_target name)
   if (NOT BUILD_TESTING)
@@ -439,10 +416,6 @@ function(test_target name)
   add_executable(${target_name} ${type} ${sources})
   set(CURRENT_TARGET ${target_name} PARENT_SCOPE)
 
-  target_include_directories(${target_name}
-    PRIVATE
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>
-  )
   workspace_helpers_set_target_cxx_properties(${target_name})
   workspace_helpers_set_target_output_directory_properties(${target_name})
   workspace_helpers_set_target_pdb_properties(${target_name})
@@ -495,36 +468,6 @@ function(add_sources)
   endif ()
 
   target_sources(${target} ${ARGV})
-endfunction()
-
-
-function(configure_target_file)
-  set(target ${ARGV0})
-  if (NOT DEFINED target)
-    set(target ${CURRENT_TARGET})
-  endif ()
-  string(JOIN "_" os TARGET OS ${TARGET_OS})
-  string(MAKE_C_IDENTIFIER ${os} os)
-  string(TOUPPER "${os}" os)
-  set(${os} 1)
-
-  string(JOIN "_" INCLUDE_GUARD_NAME ${target} targets h)
-  string(MAKE_C_IDENTIFIER ${INCLUDE_GUARD_NAME} INCLUDE_GUARD_NAME)
-  string(TOUPPER ${INCLUDE_GUARD_NAME} INCLUDE_GUARD_NAME)
-  cmake_path(
-    APPEND
-    CMAKE_CURRENT_FUNCTION_LIST_DIR
-    config
-    headers
-    targets.in
-    OUTPUT_VARIABLE input
-  )
-  target_cmake_binary_include_path(
-    output
-    ${target}
-    targets.h
-  )
-  configure_file(${input} ${output})
 endfunction()
 
 function(setup_msvc)
@@ -594,51 +537,6 @@ function(setup_msvc)
 
   set(NUGET_MICROSOFT_WINDOWS_CPPWINRT ${NUGET_MICROSOFT_WINDOWS_CPPWINRT} PARENT_SCOPE)
   set(CPPWINRT_EXECUTABLE_PATH ${cppwinrt_exe})
-  generate_winrt_sdk_projection(OPTIMIZE)
   message("Nuget packages restored")
 endfunction()
 
-function(generate_winrt_sdk_projection)
-  set(OPTIONS OPTIMIZE)
-  set(ONE_VALUE_KEYWORDS EXECUTABLE_PATH PCH_NAME)
-  set(MULTI_VALUE_KEYWORDS INPUT)
-
-  cmake_parse_arguments(PARSE_ARGV 0 CPPWINRT "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}")
-
-  if (NOT CPPWINRT_PROJECTION_ROOT_PATH)
-    cmake_path(
-      APPEND
-      CMAKE_BINARY_DIR
-      generated
-      OUTPUT_VARIABLE CPPWINRT_PROJECTION_ROOT_PATH)
-  endif ()
-
-  if (NOT EXISTS "${CPPWINRT_PROJECTION_ROOT_PATH}/winrt")
-    if (NOT CPPWINRT_EXECUTABLE_PATH)
-      set(CPPWINRT_EXECUTABLE_PATH ${NUGET_MICROSOFT_WINDOWS_CPPWINRT}/bin/cppwinrt.exe)
-    endif ()
-
-    set(CPPWINRT_COMMAND ${CPPWINRT_EXECUTABLE_PATH})
-
-    list(APPEND CPPWINRT_COMMAND -output ${CPPWINRT_PROJECTION_ROOT_PATH})
-    list(APPEND CPPWINRT_COMMAND -reference sdk)
-
-    if (CPPWINRT_PCH_NAME)
-      list(APPEND CPPWINRT_COMMAND -pch ${CPPWINRT_PCH_NAME})
-    endif ()
-
-    if (CPPWINRT_OPTIMIZE)
-      list(APPEND CPPWINRT_COMMAND -optimize)
-    endif ()
-
-    message(VERBOSE "Generating CppWinRT headers")
-    message(VERBOSE "generate_winrt_projection: CPPWINRT_COMMAND = ${CPPWINRT_COMMAND}")
-
-    execute_process(
-      COMMAND ${CPPWINRT_COMMAND}
-      OUTPUT_VARIABLE CPPWINRT_OUTPUT
-    )
-
-    message(VERBOSE "generate_winrt_projection: CPPWINRT_OUTPUT = ${CPPWINRT_OUTPUT}")
-  endif ()
-endfunction()
