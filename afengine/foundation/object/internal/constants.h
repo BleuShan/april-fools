@@ -28,7 +28,7 @@ constexpr auto kDashChar = '-';
 #endif
 
 constexpr auto kCStrSize =
-    kShortUuidStringLen + kUuidStringSegmentLengths.size() - 1;
+    kShortUuidStringLen + kUuidStringSegmentLengths.size();
 constexpr auto kCStrLen = kCStrSize - 1;
 
 }  // namespace afengine::foundation::internal

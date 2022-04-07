@@ -25,18 +25,20 @@ auto ObjectIdHooks::Parse(StringView value) -> ValueTypeInfo::value_type {
 
   if (!success && (sourceSize == kShortUuidStringLen ||
                    sourceSize == kShortUuidStringSize)) {
-    std::array<StringView::value_type, kCStrSize> buffer{};
+    std::array<StringView::value_type, kCStrSize + 1> buffer{};
     auto reader = value.cbegin();
     auto writer = buffer.begin();
     auto writerEnd = buffer.cend();
     auto readerEnd = value.cend();
 
     for (auto&& size : kUuidStringSegmentLengths) {
-      writer = std::copy_n(reader, size, writer);
-      reader = std::ranges::next(reader, size, readerEnd);
+      auto segmentEnd = std::ranges::next(reader, size, readerEnd);
+      std::transform(reader, segmentEnd, writer, std::tolower);
+      reader = segmentEnd;
+      writer = std::ranges::next(writer, size, writerEnd);
 
       if (reader != readerEnd && writer != writerEnd) {
-        *writer = '-';
+        *writer = kDashChar;
         writer = std::ranges::next(writer, 1, writerEnd);
       }
     }
