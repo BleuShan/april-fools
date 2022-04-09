@@ -1,4 +1,5 @@
 add_sources(
   PUBLIC
-  platform.h
+  core.h
+  Platform.h
 )

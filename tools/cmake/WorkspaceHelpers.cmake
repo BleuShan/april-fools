@@ -111,14 +111,14 @@ function(workspace_helpers_set_target_cxx_properties name)
   set_target_properties(
     ${name}
     PROPERTIES
-    C_STANDARD ${standard}
+    C_STANDARD 17
     C_STANDARD_REQUIRED ON
     C_EXTENSIONS OFF
     CXX_STANDARD ${standard}
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
     VISIBILITY_PRESET hidden
-    $<$<BOOL:${APPLE}>:OBJC_STANDARD;11;OBJCXX_STANDARD;23>
+    $<$<BOOL:${APPLE}>:OBJC_STANDARD;17;OBJCXX_STANDARD;23>
   )
 
   target_compile_definitions(

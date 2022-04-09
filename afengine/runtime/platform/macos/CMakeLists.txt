@@ -1,9 +1,11 @@
 add_sources(
-  PRIVATE
+  PUBLIC
+  Platform.h
   AFEngineApplication.h
-  AFEngineApplication.mm
   AFEngineApplicationDelegate.h
+
+  PRIVATE
+  AFEngineApplication.m
   AFEngineApplicationDelegate.mm
-  cocoa.h
-  cocoa.mm
+  Platform.mm
 )

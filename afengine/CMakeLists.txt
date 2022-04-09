@@ -8,8 +8,13 @@ find_package(Folly CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(absl CONFIG REQUIRED)
 find_package(mimalloc CONFIG REQUIRED)
-find_package(directX-headers CONFIG)
-find_package(directxmath CONFIG)
+
+list_contains(VCPKG_MANIFEST_FEATURES Windows supports_windows)
+
+if (supports_windows)
+  find_package(directX-headers CONFIG REQUIRED)
+  find_package(directxmath CONFIG REQUIRED)
+endif ()
 
 library_target(
   ${PROJECT_NAME}
@@ -29,6 +34,7 @@ target_link_libraries(
   "$<$<IN_LIST:windows,${VCPKG_MANIFEST_FEATURES}>:Microsoft::DirectX-Guids>"
   "$<$<IN_LIST:windows,${VCPKG_MANIFEST_FEATURES}>:Microsoft::DirectX-Headers>"
   "$<$<IN_LIST:windows,${VCPKG_MANIFEST_FEATURES}>:Microsoft::DirectXMath>"
+  "$<$<IN_LIST:macos, ${VCPKG_MANIFEST_FEATURES}>:-framework Foundation>"
   "$<$<IN_LIST:macos, ${VCPKG_MANIFEST_FEATURES}>:-framework AppKit>"
 )
 

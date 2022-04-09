@@ -4,5 +4,6 @@
 #include "application/Application.h"
 #include "foundation/foundation.h"
 #include "macros/macros.h"
+#include "runtime/runtime.h"
 
 #endif
