@@ -23,13 +23,13 @@ class AFENGINE_EXPORT Platform {
       return Main();
     }
 
-    auto NotifyShutdown() -> void { Terminate(true); };
+    inline auto NotifyShutdown() -> void { Terminate(true); };
 
     inline auto Shutdown() -> void { Terminate(false); }
 
-    inline auto IsRunning() const -> bool { return isRunning_; }
+    [[nodiscard]] inline auto IsRunning() const -> bool { return isRunning_; }
 
-    inline auto CommandlineArguments() const
+    [[nodiscard]] inline auto CommandlineArguments() const
         -> std::vector<foundation::StringView> {
       return GetCommandLineArguments();
     }
@@ -39,7 +39,7 @@ class AFENGINE_EXPORT Platform {
     virtual auto Initialize() -> void = 0;
     virtual auto Main() -> int = 0;
     virtual auto Terminate(bool notify) -> void = 0;
-    virtual auto GetCommandLineArguments() const
+    [[nodiscard]] virtual auto GetCommandLineArguments() const
         -> std::vector<foundation::StringView> = 0;
 
     inline auto IsRunning(bool value) -> bool {

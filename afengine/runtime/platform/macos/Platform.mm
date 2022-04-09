@@ -10,8 +10,8 @@ auto Platform::Initialize() -> void {}
 auto Platform::Main() -> int {
   @autoreleasepool {
     auto app = AFEngineApplication.sharedApplication;
-    auto appDelegate = [[[AFEngineApplicationDelegate alloc]
-        initWithPlatform:this] autorelease];
+    auto appDelegate =
+        [[AFEngineApplicationDelegate alloc] initWithPlatform:this];
     app.delegate = appDelegate;
     IsRunning(true);
     [app run];

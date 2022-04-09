@@ -13,16 +13,19 @@ namespace afengine::runtime {
  */
 class AFENGINE_EXPORT Runtime final {
   public:
-    Runtime();
-
     static auto Instance() -> Runtime*;
 
     auto Start() -> int;
     auto Shutdown() -> Runtime&;
 
-    inline auto Platform() -> platform::core::Platform& { return *platform_; }
+    [[nodiscard]] inline auto Platform() const noexcept
+        -> platform::core::Platform* {
+      return platform_.get();
+    }
 
   private:
+    friend auto MakeDefaultRuntime() -> gsl::owner<Runtime*>;
+    Runtime();
     std::unique_ptr<platform::core::Platform> platform_{nullptr};
 };
 

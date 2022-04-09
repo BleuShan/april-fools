@@ -3,9 +3,12 @@ add_sources(
   Platform.h
   AFEngineApplication.h
   AFEngineApplicationDelegate.h
-
+  AFEngineMenu.h
+  AFEngineWindow.h
   PRIVATE
-  AFEngineApplication.m
+  AFEngineApplication.mm
   AFEngineApplicationDelegate.mm
+  AFEngineMenu.mm
+  AFEngineWindow.mm
   Platform.mm
 )

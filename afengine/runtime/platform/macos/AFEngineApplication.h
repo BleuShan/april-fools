@@ -5,7 +5,6 @@
   #include <AppKit/AppKit.h>
 
 @interface AFEngineApplication : NSApplication
-@property(readonly, strong) NSWindow* defaultMainWindow;
 @end
 
 #endif

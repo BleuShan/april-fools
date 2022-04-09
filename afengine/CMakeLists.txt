@@ -8,6 +8,7 @@ find_package(Folly CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(absl CONFIG REQUIRED)
 find_package(mimalloc CONFIG REQUIRED)
+find_package(Microsoft.GSL CONFIG REQUIRED)
 
 list_contains(VCPKG_MANIFEST_FEATURES Windows supports_windows)
 
@@ -26,6 +27,7 @@ library_target(
   absl::cord
   imgui::imgui
   mimalloc
+  Microsoft.GSL::GSL
 )
 
 target_link_libraries(

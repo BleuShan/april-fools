@@ -5,16 +5,8 @@
 #include "../platform/platform.h"
 #include "glog/logging.h"
 
-namespace runtime = afengine::runtime;
-
-using runtime::Runtime;
+using afengine::runtime::Runtime;
 using RuntimeSingleton = folly::Singleton<Runtime>;
-
-[[maybe_unused]] static const RuntimeSingleton kDefaultRuntime{
-    []() -> Runtime* {
-      return new Runtime();  // NOLINT(cppcoreguidelines-owning-memory)
-    },
-    [](Runtime* instance) { instance->Shutdown(); }};
 
 namespace afengine::runtime {
 Runtime::Runtime() : platform_(std::make_unique<platform::DefaultPlatform>()) {}
@@ -28,7 +20,7 @@ auto Runtime::Instance() -> Runtime* {
 }
 
 auto Runtime::Start() -> int {
-  auto args = Platform().CommandlineArguments();
+  auto args = Platform()->CommandlineArguments();
   google::InitGoogleLogging(args[0].data());
   folly::SingletonVault::singleton()->registrationComplete();
   return platform_->Run();
@@ -45,4 +37,20 @@ auto Runtime::Shutdown() -> Runtime& {
   return *this;
 }
 
+auto MakeDefaultRuntime() -> gsl::owner<Runtime*> {
+  return new Runtime();
+}
+
+auto TeardownRuntime(Runtime* instance) -> void {
+  instance->Shutdown();
+}
+
 }  // namespace afengine::runtime
+
+namespace {
+using afengine::runtime::MakeDefaultRuntime;
+using afengine::runtime::TeardownRuntime;
+
+[[maybe_unused]] static const RuntimeSingleton kDefaultRuntime{
+    MakeDefaultRuntime, TeardownRuntime};  // namespace
+}  // namespace

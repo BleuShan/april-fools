@@ -11,6 +11,9 @@
       "name": "mimalloc"
     },
     {
+      "name": "ms-gsl"
+    },
+    {
       "name": "abseil",
       "features": ["cxx17"]
     },

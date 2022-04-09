@@ -130,6 +130,7 @@ function(workspace_helpers_set_target_cxx_properties name)
     ${name}
     PUBLIC
     "$<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:/bigobj;/MP>"
+    "$<$<BOOL:${APPLE}>:-fobjc-arc>"
   )
 
   target_include_directories(
