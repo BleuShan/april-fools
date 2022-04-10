@@ -6,7 +6,13 @@
 
 namespace afengine::runtime::platform::windows {
 
-class AFENGINE_EXPORT Platform : public core::Platform {};
+class AFENGINE_EXPORT Platform final: public core::Platform {
+    auto PlatformBootstrap() -> void override;
+    auto PlatformRun() -> int override;
+    auto PlatformShutdown() -> void override;
+    [[nodiscard]] auto PlatformCommandlineArguments() const
+        -> std::vector<foundation::StdStringView> override;
+};
 
 }  // namespace afengine::runtime::platform::windows
 #endif  // AFENGINE_RUNTIME_PLATFORM_WINDOWS_PLATFORM_H

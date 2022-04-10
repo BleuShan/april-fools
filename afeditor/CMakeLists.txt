@@ -1,6 +1,6 @@
 project(
   AFEditor
-  VERSION 0.1.0
+  VERSION 0.1.0.0
   LANGUAGES C CXX
 )
 
@@ -17,4 +17,5 @@ if (WIN32)
     WIN32_EXECUTABLE ON
   )
 endif ()
+configure_vs_app_manifest(AFEditor)
 

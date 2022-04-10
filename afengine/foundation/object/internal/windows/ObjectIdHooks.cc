@@ -1,12 +1,11 @@
-#include "afengine/macros.h"
-#include "../internal.h"
+#include "ObjectIdHooks.h"
 
 using winrt::Windows::Foundation::GuidHelper;
 
 namespace afengine::foundation::internal {
 
 auto ObjectIdHooks::Parse(StringView value) -> ValueTypeInfo::value_type {
-  auto sourceSize = value.size();
+  const auto sourceSize = value.size();
 
   if (sourceSize == kCStrSize || sourceSize == kCStrLen) {
     const String data{value};
@@ -16,7 +15,7 @@ auto ObjectIdHooks::Parse(StringView value) -> ValueTypeInfo::value_type {
   if (sourceSize == kShortUuidStringLen || sourceSize == kShortUuidStringSize) {
     std::array<StringView::value_type, kCStrSize> buffer{};
     auto reader = value.cbegin();
-    auto readerEnd = value.cend();
+    const auto readerEnd = value.cend();
 
     auto writer = buffer.begin();
     auto writerEnd = buffer.cend();
@@ -30,7 +29,7 @@ auto ObjectIdHooks::Parse(StringView value) -> ValueTypeInfo::value_type {
         writer = std::ranges::next(writer, 1, writerEnd);
       }
     }
-    StringView result{buffer};
+    const StringView result{buffer.data(), kCStrLen};
     return ValueTypeInfo::value_type{result};
   }
 
@@ -41,57 +40,59 @@ auto ObjectIdHooks::Generate() -> ValueTypeInfo::value_type {
   return GuidHelper::CreateNewGuid();
 }
 
-auto ObjectIdHooks::ToString(ValueTypeInfo::const_reference value) -> String {
+auto ObjectIdHooks::ToString(
+    ValueTypeInfo::const_reference value) -> String {
   return std::format(kGuidFormat, value.Data1, value.Data2, value.Data3,
-                            value.Data4[0], value.Data4[1], value.Data4[2],
-                            value.Data4[3], value.Data4[4], value.Data4[5],
-                            value.Data4[6], value.Data4[7]);
+                     value.Data4[0], value.Data4[1], value.Data4[2],
+                     value.Data4[3], value.Data4[4], value.Data4[5],
+                     value.Data4[6], value.Data4[7]);
 }
 
-auto ObjectIdHooks::IsNull(ValueTypeInfo::const_reference value) noexcept
-  return GuidHelper::Equals(Value(), GuidHelper::Empty());
+auto ObjectIdHooks::IsNull(
+    ValueTypeInfo::const_reference value) noexcept -> bool {
+  return GuidHelper::Equals(value, GuidHelper::Empty());
 }
 
 auto operator==(
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
-    -> bool {
+-> bool {
   return GuidHelper::Equals(lhs.value_, rhs.value_);
 }
 
 auto operator!=(
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
-    -> bool {
+-> bool {
   return !GuidHelper::Equals(lhs.value_, rhs.value_);
 }
 
 auto operator<(
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
-    -> bool {
+-> bool {
   return lhs.value_ < rhs.value_;
 }
 
 auto operator<=(
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
-    -> bool {
+-> bool {
   return lhs.value_ < rhs.value_ || GuidHelper::Equals(lhs.value_, rhs.value_);
 }
 
 auto operator>(
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
-    -> bool {
+-> bool {
   return !(lhs.value_ < rhs.value_);
 }
 
 auto operator>=(
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& lhs,
     const BasicObjectId<ObjectIdHooks::ValueTypeInfo, ObjectIdHooks>& rhs)
-    -> bool {
+-> bool {
   return !(lhs.value_ < rhs.value_) &&
          !GuidHelper::Equals(lhs.value_, rhs.value_);
 }
-}  // namespace afengine::foundation::internal
+} // namespace afengine::foundation::internal

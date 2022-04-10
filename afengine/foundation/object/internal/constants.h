@@ -19,11 +19,11 @@ constexpr auto kShortUuidStringSize = kShortUuidStringLen + 1;
 
 #if UNICODE
 constexpr StringView kGuidFormat =
-    L"{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}";
+    L"{:08X}-{:04X}-{:04X}-{:02X}{:02X}-{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}";
 constexpr auto kDashChar = L'-';
 #else
 constexpr StringView kGuidFormat =
-    "{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}";
+    "{:08X}-{:04X}-{:04X}-{:02X}{:02X}-{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}";
 constexpr auto kDashChar = '-';
 #endif
 

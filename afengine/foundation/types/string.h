@@ -15,13 +15,23 @@ using namespace std::literals;
 
 namespace foundation {
 
+using U8String = std::u8string;
+using U8StringView  = std::u8string_view;
+using U16String = std::u16string;
+using U16StringView  = std::u16string_view;
+using U32String = std::u32string;
+using U32StringView  = std::u32string_view;
+using StdString = std::string;
+using StdStringView = std::string_view;
+
 #if UNICODE && WIN32
 using String = std::wstring;
 using StringView = std::wstring_view;
 #else
-using String = std::string;
-using StringView = std::string_view;
+using String = StdString;
+using StringView = StdStringView;
 #endif
+
 
 template <size_t size>
 using FixedString [[maybe_unused]] = folly::BasicFixedString<String::value_type, size>;

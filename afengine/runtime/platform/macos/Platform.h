@@ -7,12 +7,11 @@
 namespace afengine::runtime::platform::macos {
 
 class AFENGINE_EXPORT Platform final : public core::Platform {
-  protected:
-    auto Initialize() -> void override;
-    auto Main() -> int override;
-    auto Terminate(bool notify) -> void override;
-    auto GetCommandLineArguments() const
-        -> std::vector<foundation::StringView> override;
+    auto PlatformBootstrap() -> void override;
+    auto PlatformRun() -> int override;
+    auto PlatformShutdown() -> void override;
+    auto PlatformCommandlineArguments() const
+        -> std::vector<foundation::StdStringView> override;
 };
 
 }  // namespace afengine::runtime::platform::macos

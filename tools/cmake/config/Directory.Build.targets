@@ -1,0 +1,5 @@
+<Project>
+  <ImportGroup>
+    @import_targets@
+  </ImportGroup>
+</Project>

@@ -1,6 +1,6 @@
 project(
   AFEngine
-  VERSION 0.1.0
+  VERSION 0.1.0.0
   LANGUAGES C CXX
 )
 
@@ -10,7 +10,7 @@ find_package(absl CONFIG REQUIRED)
 find_package(mimalloc CONFIG REQUIRED)
 find_package(Microsoft.GSL CONFIG REQUIRED)
 
-list_contains(VCPKG_MANIFEST_FEATURES Windows supports_windows)
+list_contains(VCPKG_MANIFEST_FEATURES windows supports_windows)
 
 if (supports_windows)
   find_package(directX-headers CONFIG REQUIRED)
@@ -20,7 +20,7 @@ endif ()
 library_target(
   ${PROJECT_NAME}
   LINK_LIBRARIES
-  PUBLIC
+  PRIVATE
   Folly::folly
   Folly::folly_deps
   absl::btree

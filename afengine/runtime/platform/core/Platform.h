@@ -8,9 +8,10 @@
 #include "afengine/macros/macros.h"
 
 namespace afengine::runtime::platform::core {
-
 class AFENGINE_EXPORT Platform {
   public:
+    enum class StatusTypes : uint8_t { BootstrapPending = 0, Stopped, Running };
+
     Platform(Platform& source) noexcept = default;
     Platform(Platform&& source) noexcept = default;
     virtual ~Platform() = default;
@@ -18,40 +19,55 @@ class AFENGINE_EXPORT Platform {
     auto operator=(const Platform& source) -> Platform& = default;
     auto operator=(Platform&& source) noexcept -> Platform& = default;
 
-    inline auto Run() -> int {
-      Initialize();
-      return Main();
+    auto Bootstrap() -> Platform& {
+      if (status_ != StatusTypes::BootstrapPending) {
+        throw std::domain_error("Invalid status");
+      }
+
+      PlatformBootstrap();
+      status_ = StatusTypes::Stopped;
+      return *this;
     }
 
-    inline auto NotifyShutdown() -> void { Terminate(true); };
+    auto Run() -> int {
+      if (status_ != StatusTypes::Stopped) {
+        throw std::domain_error("Invalid status");
+      }
+      status_ = StatusTypes::Running;
 
-    inline auto Shutdown() -> void { Terminate(false); }
+      const auto result = PlatformRun();
 
-    [[nodiscard]] inline auto IsRunning() const -> bool { return isRunning_; }
+      status_ = StatusTypes::Stopped;
 
-    [[nodiscard]] inline auto CommandlineArguments() const
-        -> std::vector<foundation::StringView> {
-      return GetCommandLineArguments();
+      return result;
+    }
+
+    auto Shutdown() -> Platform& {
+      if (status_ == StatusTypes::BootstrapPending) {
+        throw std::domain_error("Invalid status");
+      }
+
+      PlatformShutdown();
+      status_ = StatusTypes::BootstrapPending;
+      return *this;
+    }
+
+    [[nodiscard]] auto Status() const { return status_; }
+
+    [[nodiscard]] auto CommandlineArguments() const {
+      return PlatformCommandlineArguments();
     }
 
   protected:
     Platform() = default;
-    virtual auto Initialize() -> void = 0;
-    virtual auto Main() -> int = 0;
-    virtual auto Terminate(bool notify) -> void = 0;
-    [[nodiscard]] virtual auto GetCommandLineArguments() const
-        -> std::vector<foundation::StringView> = 0;
-
-    inline auto IsRunning(bool value) -> bool {
-      auto isRunning = isRunning_;
-      if (value != isRunning_) {
-        isRunning_ = value;
-      }
-      return isRunning;
-    };
+    virtual auto PlatformBootstrap() -> void = 0;
+    virtual auto PlatformRun() -> int = 0;
+    virtual auto PlatformShutdown() -> void = 0;
+    [[nodiscard]] virtual auto PlatformCommandlineArguments() const
+        -> std::vector<foundation::StdStringView> = 0;
 
   private:
-    bool isRunning_{false};
+    StatusTypes status_{StatusTypes::BootstrapPending};
 };
 
 }  // namespace afengine::runtime::platform::core

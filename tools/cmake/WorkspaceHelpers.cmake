@@ -142,6 +142,7 @@ function(workspace_helpers_set_target_cxx_properties name)
     "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
     "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>"
     "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated/include>"
+    "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated/${name}>"
   )
 endfunction()
 
@@ -470,74 +471,3 @@ function(add_sources)
 
   target_sources(${target} ${ARGV})
 endfunction()
-
-function(setup_msvc)
-  if (NOT WIN32)
-    return()
-  endif ()
-
-  message("Restoring nuget packages")
-  cmake_path(
-    APPEND
-    CMAKE_CURRENT_FUNCTION_LIST_DIR
-    config
-    packages.config
-    OUTPUT_VARIABLE input
-  )
-  if (NOT DEFINED NUGET_PACKAGES_DIR)
-    cmake_path(
-      APPEND
-      CMAKE_BINARY_DIR
-      packages
-      OUTPUT_VARIABLE dir
-    )
-
-    set(NUGET_PACKAGES_DIR ${dir} CACHE STRING "Nuget package directory")
-  endif ()
-  configure_file(${input} ${NUGET_PACKAGES_DIR}.config COPYONLY)
-
-  execute_process(
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    COMMAND nuget
-    restore
-    -PackagesDirectory
-    ${NUGET_PACKAGES_DIR}
-  )
-
-  cmake_path(
-    APPEND
-    NUGET_PACKAGES_DIR
-    Microsoft.Windows.CppWinRT.2.0.220325.3
-    OUTPUT_VARIABLE NUGET_MICROSOFT_WINDOWS_CPPWINRT
-  )
-  cmake_path(
-    APPEND
-    NUGET_MICROSOFT_WINDOWS_CPPWINRT
-    build
-    native
-    Microsoft.Windows.CppWinRT.targets
-    OUTPUT_VARIABLE cppwinrt_targets
-  )
-  cmake_path(
-    APPEND
-    NUGET_MICROSOFT_WINDOWS_CPPWINRT
-    build
-    native
-    Microsoft.Windows.CppWinRT.props
-    OUTPUT_VARIABLE cppwinrt_props
-  )
-  cmake_path(
-    APPEND
-    NUGET_MICROSOFT_WINDOWS_CPPWINRT
-    bin
-    cppwinrt.exe
-    OUTPUT_VARIABLE cppwinrt_exe
-  )
-  string(JOIN ";" project_imports ${cppwnrt_props} ${cppwnrt_targets})
-  set(NUGET_MICROSOFT_WINDOWS_CPPWINRT_IMPORTS ${project_imports} PARENT_SCOPE)
-
-  set(NUGET_MICROSOFT_WINDOWS_CPPWINRT ${NUGET_MICROSOFT_WINDOWS_CPPWINRT} PARENT_SCOPE)
-  set(CPPWINRT_EXECUTABLE_PATH ${cppwinrt_exe})
-  message("Nuget packages restored")
-endfunction()
-

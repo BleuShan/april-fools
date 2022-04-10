@@ -1,14 +1,14 @@
 #ifndef AFEENGINE_FOUNDATION_INTERNAL_BASICOBJECTID_H
 #define AFEENGINE_FOUNDATION_INTERNAL_BASICOBJECTID_H
 
-#include "afengine/macros/macros.h"
 #include "afengine/foundation/types/types.h"
+#include "afengine/macros/macros.h"
 #include "constants.h"
 
 namespace afengine::foundation::internal {
 
 template <typename ValueTypeInfo, typename Hooks = void>
-class AFENGINE_EXPORT BasicObjectId {
+class BasicObjectId {
   public:
     using const_reference = typename ValueTypeInfo::const_reference;
     using forwarding_reference = typename ValueTypeInfo::forwarding_reference;
@@ -36,8 +36,9 @@ class AFENGINE_EXPORT BasicObjectId {
     auto operator=(const BasicObjectId& source) -> BasicObjectId& = default;
     auto operator=(BasicObjectId&& source) noexcept -> BasicObjectId& = default;
 
-    explicit operator String() const requires
-        std::regular_invocable<decltype(Hooks::ToString), const_reference> {
+    [[nodiscard]] auto ToString() const -> String requires std::same_as<
+        std::invoke_result_t<decltype(Hooks::ToString), const_reference>,
+        String> {
       return Hooks::ToString(value_);
     }
 
@@ -51,33 +52,28 @@ class AFENGINE_EXPORT BasicObjectId {
       return false;
     };
 
-    static auto Parse(StringView value) -> BasicObjectId requires
-        std::regular_invocable<decltype(Hooks::Parse), StringView> && requires {
-      { Hooks::Parse(value) } -> std::same_as<value_type>;
-    }
-    {
+    static auto Parse(StringView value) -> BasicObjectId requires std::same_as<
+        std::invoke_result_t<decltype(Hooks::Parse), StringView>, value_type> {
       auto result = Hooks::Parse(value);
       return BasicObjectId{result};
     }
 
-    static auto Parse(StringView value) -> BasicObjectId
-        requires(std::constructible_from<value_type, StringView> &&
-                 !std::regular_invocable<decltype(Hooks::Parse), StringView>) {
+    static auto Parse(StringView value) -> BasicObjectId requires(
+        std::constructible_from<value_type, StringView> &&
+        !std::same_as<std::invoke_result_t<decltype(Hooks::Parse), StringView>,
+                      value_type>) {
       value_type result{value};
       return BasicObjectId{result};
     }
 
-    static auto Generate() -> BasicObjectId requires
-        std::regular_invocable<decltype(Hooks::Generate)> && requires {
-      { Hooks::Generate() } -> std::same_as<value_type>;
-    }
-    {
+    static auto Generate() -> BasicObjectId requires std::same_as<
+        std::invoke_result_t<decltype(Hooks::Generate)>, value_type> {
       auto result = Hooks::Generate();
       return BasicObjectId{result};
     }
 
-  protected:
-    explicit BasicObjectId(const_reference value) noexcept : value_{value} {};
+  protected : explicit BasicObjectId(const_reference value) noexcept
+      : value_{value} {};
     explicit BasicObjectId(forwarding_reference value) noexcept
         : value_{value} {};
     [[maybe_unused, nodiscard]] auto Value() const noexcept -> const_reference {

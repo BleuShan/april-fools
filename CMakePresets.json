@@ -238,7 +238,7 @@
     {
       "name": "mimalloc",
       "environment": {
-        "MIMALLOC_SHOW_STATS": {}
+        "MIMALLOC_SHOW_STATS": "1"
       },
       "hidden": true
     },
@@ -250,8 +250,19 @@
     {
       "name": "Ninja-x64-macOS-dynamic-mimalloc",
       "inheritConfigureEnvironment": true,
-      "configurePreset": "Ninja-x64-macOS-dynamic",
-      "inherits": ["Ninja-x64-macOS-dynamic", "mimalloc"]
+      "inherits": [ "Ninja-x64-macOS-dynamic", "mimalloc" ]
+    },
+    {
+      "name": "VS2022-x64-windows-dynamic",
+      "displayName": "Default",
+      "configurePreset": "VS2022-x64-windows-dynamic",
+      "inheritConfigureEnvironment": true
+    },
+    {
+      "name": "VS2022-x64-windows-dynamic-mimalloc",
+      "displayName": "Default",
+      "inherits": [ "VS2022-x64-windows-dynamic", "mimalloc" ],
+      "inheritConfigureEnvironment": true
     }
   ]
 }

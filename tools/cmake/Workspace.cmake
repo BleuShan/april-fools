@@ -5,6 +5,7 @@ include(WorkspaceUtilities)
 include(VcpkgHelpers)
 include(WorkspaceHelpers)
 include(GenerateFiles)
+include(WorkspaceVSHelpers)
 
 # Globals
 set(WORKSPACE_TEST_SUFFIX_REGEX "([-_]t|T)ests?$")

@@ -24,7 +24,7 @@ TYPED_TEST_P(ObjectIdTests, StringConversion) {
   ASSERT_FALSE(value->IsNull()) << "Should not be null uuid";
   if (value == nullptr) return;
 
-  const auto stringValue = static_cast<String>(*value);
+  const auto stringValue = value->ToString();
   ASSERT_FALSE(IsEmptyOrBlank(stringValue))
       << "Should return a non empty string.";
 
@@ -40,4 +40,4 @@ REGISTER_TYPED_TEST_SUITE_P(ObjectIdTests, Constructor, StringConversion);
 
 INSTANTIATE_TYPED_TEST_SUITE_P(WithObjectIdFactories, ObjectIdTests,
                                fixtures::factories::ObjectIdFactories);
-}  // namespace afengine::foundation
+} // namespace afengine::foundation

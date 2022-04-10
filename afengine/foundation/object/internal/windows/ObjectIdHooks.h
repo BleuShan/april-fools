@@ -11,11 +11,10 @@ namespace afengine::foundation::internal {
 
 struct AFENGINE_EXPORT ObjectIdHooks {
     using ValueTypeInfo = TypeInfo<winrt::guid>;
-    static auto Parse(StringView value) -> typename ValueTypeInfo::value_type;
-    static auto Generate() -> typename ValueTypeInfo::value_type;
-    static bool IsNull(typename ValueTypeInfo::const_reference value) noexcept;
-    static auto ToString(typename ValueTypeInfo::const_reference value)
-        -> String;
+    static auto Parse(StringView value) -> ValueTypeInfo::value_type;
+    static auto Generate() -> ValueTypeInfo::value_type;
+    static auto IsNull(ValueTypeInfo::const_reference value) noexcept -> bool;
+    static auto ToString(ValueTypeInfo::const_reference value) -> String;
 };
 
 }  // namespace afengine::foundation::internal
