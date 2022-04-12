@@ -1,5 +1,5 @@
-#ifndef AFENGINE_FOUNDATION_TYPES_CONCEPTS_KINDS_H
-#define AFENGINE_FOUNDATION_TYPES_CONCEPTS_KINDS_H
+#ifndef AFENGINE_FOUNDATION_TYPES_CONCEPTS_REFLECTION_H
+#define AFENGINE_FOUNDATION_TYPES_CONCEPTS_REFLECTION_H
 
 #include <concepts>
 
@@ -22,6 +22,13 @@ concept VirtuallyDestructible = std::has_virtual_destructor_v<Type>;
 
 template <typename Type>
 concept PlainObject = std::is_pod_v<Type>;
+
+template <typename Type, typename Output, typename... Args>
+concept Fn = std::same_as<Output, std::invoke_result_t<Type, Args...>>;
+
+template <typename Type, typename Output, typename... Args>
+concept CompatibleFn =
+    std::convertible_to<std::invoke_result_t<Type, Args...>, Output>;
 
 }  // namespace afengine::foundation
 

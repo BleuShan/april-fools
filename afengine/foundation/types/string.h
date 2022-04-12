@@ -3,6 +3,7 @@
 
 #include <folly/FixedString.h>
 
+#include <charconv>
 #include <cctype>
 #include <string>
 
@@ -42,7 +43,7 @@ requires std::integral<typename StringLike::value_type> &&
   { std::ranges::begin(value) } -> std::input_or_output_iterator;
   { std::ranges::end(value) } -> std::input_or_output_iterator;
 }
-constexpr auto IsEmptyOrBlank(StringLike value) noexcept -> bool {
+constexpr auto isEmptyOrBlank(StringLike value) noexcept -> bool {
   using ReadableTrait = std::indirectly_readable_traits<StringLike>;
 
   if (std::empty(value)) return true;

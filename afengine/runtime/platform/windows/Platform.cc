@@ -1,32 +1,33 @@
 #include "Platform.h"
-#include "common.h"
+
 #include <mddbootstrap.h>
+
+#include "common.h"
 
 namespace afengine::runtime::platform::windows {
 
-auto Platform::PlatformBootstrap() -> void {
+auto Platform::platformInitialize() -> void {
   winrt::init_apartment();
 }
 
-auto Platform::PlatformRun() -> int {
+auto Platform::platformRun() -> int {
   return 0;
 }
 
-auto Platform::PlatformShutdown() -> void {
+auto Platform::platformShutdown() -> void {
   winrt::clear_factory_cache();
   winrt::uninit_apartment();
 }
 
-auto Platform::PlatformCommandlineArguments() const
-    -> std::vector<foundation::StdStringView> {
+auto Platform::platformProcessInfo() const -> core::ProcessInfo {
   std::vector<foundation::StdStringView> args{};
   foundation::StdStringView commandLine{GetCommandLineA()};
   auto argStart = commandLine.cbegin();
   auto argEnd = commandLine.cbegin();
   const auto end = commandLine.cend();
-  while(argEnd != end) {
+  while (argEnd != end) {
     auto next = std::ranges::next(argEnd, 1, end);
-    if ( *next == ' ' && next != end) {
+    if (*next == ' ' && next != end) {
       args.emplace_back(argStart, argEnd);
       argStart = argEnd;
     }
@@ -41,4 +42,4 @@ auto Platform::PlatformCommandlineArguments() const
   return args;
 }
 
-}
+}  // namespace afengine::runtime::platform::windows

@@ -1,5 +1,6 @@
 add_sources(
   PUBLIC
+  coroutine.h
   types.h
   typedefs.h
   string.h

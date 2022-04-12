@@ -1,0 +1,9 @@
+add_sources(
+  PUBLIC
+  Task.h
+  WorkerPool.h
+  Worker.h
+  PRIVATE
+  WorkerPool.cc
+  Worker.cc
+)

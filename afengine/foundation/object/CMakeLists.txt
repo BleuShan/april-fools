@@ -1,8 +1,10 @@
 add_sources(
   PUBLIC
-  Object.h
   ObjectId.h
-  Object.cc
+  ObjectIdTraits.h
+  constants.h
+  object.h
 )
 
-add_subdirectory(internal)
+string(TOLOWER ${TARGET_OS} directory)
+add_subdirectory(${directory})

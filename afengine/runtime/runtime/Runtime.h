@@ -1,42 +1,45 @@
 #ifndef AFENGINE_RUNTIME_RUNTIME_RUNTIME_H
 #define AFENGINE_RUNTIME_RUNTIME_RUNTIME_H
 
-#include "afengine/foundation/types/types.h"
+#include "../platform/platform.h"
+#include "afengine/foundation/traits/Singleton.h"
 #include "afengine/macros/macros.h"
 
 namespace afengine::runtime {
 
-namespace platform::core {
-class Platform;
-}
-
 /**
  * The runtime environment
  */
-class AFENGINE_EXPORT Runtime final {
+class AFENGINE_EXPORT Runtime final : public foundation::Singleton<Runtime> {
   public:
-    static auto Instance() -> Runtime*;
+    enum class Status : uint8_t { Initial = 0, Stopped, Started, Shutdown };
 
-    auto Run() const -> int;
-    auto Shutdown() -> Runtime&;
+    Runtime(const Runtime& source) = delete;
+    Runtime(Runtime&& source) noexcept = default;
 
-    [[nodiscard]] auto Platform() const -> platform::core::Platform&;
+    auto operator=(Runtime&& source) noexcept -> Runtime& = default;
+    auto operator=(const Runtime& source) -> Runtime& = delete;
+
+    [[nodiscard]] auto start() -> int;
+    auto shutdown() -> Runtime&;
+
+    [[nodiscard]] auto platform() const -> platform::core::Platform&;
+    [[nodiscard]] auto currentStatus() const -> Status { return status_; }
 
   private:
-    friend auto MakeDefaultRuntime() -> gsl::owner<Runtime*>;
+    friend auto makeDefaultRuntime() -> gsl::owner<Runtime*>;
     std::unique_ptr<platform::core::Platform> platform_{nullptr};
+    Status status_{Status::Initial};
 
     explicit Runtime(decltype(platform_)::pointer platform) noexcept
-      : platform_{platform} {
-    }
+        : platform_{platform} {}
 
     explicit Runtime(decltype(platform_)&& platform) noexcept
-      : platform_{std::move(platform)} {
-    }
+        : platform_{std::move(platform)} {}
 
-    auto Bootstrap() const -> void;
+    auto initialize() -> void;
 };
 
-} // namespace afengine::runtime
+}  // namespace afengine::runtime
 
 #endif

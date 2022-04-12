@@ -1,43 +1,36 @@
 #include "Runtime.h"
 
-#include <folly/Singleton.h>
 #include <glog/logging.h>
-
-#include "../platform/platform.h"
-
-using afengine::runtime::Runtime;
-using RuntimeSingleton = folly::Singleton<Runtime>;
 
 namespace afengine::runtime {
 
-auto Runtime::Instance() -> Runtime* {
-  const auto instance = RuntimeSingleton::try_get();
-  if (instance == nullptr) {
-    return nullptr;
+auto Runtime::initialize() -> void {
+  auto [processName, _exec, _args] = platform().initialize().processInfo();
+  google::InitGoogleLogging(processName.c_str());
+  status_ = Status::Stopped;
+}
+
+auto Runtime::start() -> int {
+  if (status_ != Status::Stopped) {
+    throw std::invalid_argument("Cannot start runtime in the current state.");
   }
-  return instance.get();
+
+  status_ = Status::Started;
+  auto result = platform().run();
+  status_ = Status::Stopped;
+  return result;
 }
 
-auto Runtime::Bootstrap() const -> void {
-  Platform().Bootstrap();
-  const auto args = Platform().CommandlineArguments();
-  google::InitGoogleLogging(args[0].data());
-
-}
-
-
-auto Runtime::Run() const -> int {
-  return Platform().Run();
-}
-
-auto Runtime::Shutdown() -> Runtime& {
-  Platform().Shutdown();
+auto Runtime::shutdown() -> Runtime& {
+  platform().shutdown();
   google::ShutdownGoogleLogging();
   platform_ = nullptr;
+
+  status_ = Status::Shutdown;
   return *this;
 }
 
-auto Runtime::Platform() const -> platform::core::Platform& {
+auto Runtime::platform() const -> platform::core::Platform& {
   if (platform_ == nullptr) {
     throw std::domain_error("Runtime shutdown");
   }
@@ -45,23 +38,26 @@ auto Runtime::Platform() const -> platform::core::Platform& {
   return *platform_;
 }
 
-auto MakeDefaultRuntime() -> gsl::owner<Runtime*> {
+auto makeDefaultRuntime() -> gsl::owner<Runtime*> {
   auto instance = new Runtime{std::make_unique<platform::DefaultPlatform>()};
-  instance->Bootstrap();
+  instance->initialize();
   return instance;
 }
 
-auto TeardownRuntime(Runtime* instance) -> void {
-  instance->Shutdown();
+auto teardownRuntime(Runtime* instance) -> void {
+  if (instance->currentStatus() != Runtime::Status::Shutdown) {
+    instance->shutdown();
+  }
 }
 
-} // namespace afengine::runtime
+}  // namespace afengine::runtime
 
 namespace {
-using afengine::runtime::MakeDefaultRuntime;
-using afengine::runtime::TeardownRuntime;
 
-[[maybe_unused]] const RuntimeSingleton kDefaultRuntime{
-    MakeDefaultRuntime,
-    TeardownRuntime}; // namespace
-}                     // namespace
+using afengine::runtime::makeDefaultRuntime;
+using afengine::runtime::Runtime;
+using afengine::runtime::teardownRuntime;
+
+[[maybe_unused]] const Runtime::Holder kDefaultRuntime{
+    makeDefaultRuntime, teardownRuntime};  // namespace
+}  // namespace

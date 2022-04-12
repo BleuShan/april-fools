@@ -131,7 +131,10 @@ function(workspace_helpers_set_target_cxx_properties name)
     PUBLIC
     "$<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:/bigobj;/MP>"
     "$<$<BOOL:${APPLE}>:-fobjc-arc>"
+    "$<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-std=c++2a;>"
+    "$<$<COMPILE_LANG_AND_ID:OBJCXX,AppleClang>:-std=c++2a;>"
   )
+
 
   target_include_directories(
     ${name}

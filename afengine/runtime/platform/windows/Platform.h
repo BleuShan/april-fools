@@ -6,12 +6,12 @@
 
 namespace afengine::runtime::platform::windows {
 
-class AFENGINE_EXPORT Platform final: public core::Platform {
-    auto PlatformBootstrap() -> void override;
-    auto PlatformRun() -> int override;
-    auto PlatformShutdown() -> void override;
-    [[nodiscard]] auto PlatformCommandlineArguments() const
-        -> std::vector<foundation::StdStringView> override;
+class AFENGINE_EXPORT Platform final : public core::Platform {
+    auto platformInitialize() -> void override;
+    auto platformRun() -> int override;
+    auto platformShutdown() -> void override;
+    [[nodiscard]] auto platformProcessInfo() const
+        -> core::ProcessInfo override;
 };
 
 }  // namespace afengine::runtime::platform::windows

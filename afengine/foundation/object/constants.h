@@ -1,5 +1,5 @@
-#ifndef AFEENGINE_FOUNDATION_INTERNAL_OBJECTID_CONSTANTS_H
-#define AFEENGINE_FOUNDATION_INTERNAL_OBJECTID_CONSTANTS_H
+#ifndef AFEENGINE_FOUNDATION_OBJECT_CONSTANTS_H
+#define AFEENGINE_FOUNDATION_OBJECT_CONSTANTS_H
 
 #include <algorithm>
 #include <array>
@@ -7,7 +7,7 @@
 
 #include "afengine/foundation/types/types.h"
 
-namespace afengine::foundation::internal {
+namespace afengine::foundation {
 
 constexpr size_t kObjectIdValueMaxSize = 16UL * sizeof(byte);
 constexpr auto kUuidStringSegmentLengths =
@@ -31,6 +31,6 @@ constexpr auto kCStrSize =
     kShortUuidStringLen + kUuidStringSegmentLengths.size();
 constexpr auto kCStrLen = kCStrSize - 1;
 
-}  // namespace afengine::foundation::internal
+}  // namespace afengine::foundation
 
 #endif  // AFEENGINE_FOUNDATION_INTERNAL_OBJECTID_CONSTANTS_H

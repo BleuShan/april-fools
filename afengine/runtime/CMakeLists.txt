@@ -3,5 +3,6 @@ add_sources(
   runtime.h
 )
 
+add_subdirectory(concurrent)
 add_subdirectory(platform)
 add_subdirectory(runtime)

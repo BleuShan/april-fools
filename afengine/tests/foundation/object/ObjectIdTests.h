@@ -5,38 +5,43 @@
 
 #include <memory>
 
-#include "afengine/foundation/object/ObjectId.h"
-#include "afengine/foundation/types/types.h"
+#include "afengine/foundation/object/object.h"
 
 namespace afengine::foundation {
 
-template <FactoryOf<ObjectId> Factory>
-class ObjectIdTests : public testing::Test {
+class ObjectIdTests : public testing::TestWithParam<std::optional<StringView>> {
   public:
-    auto Value() -> const ObjectId* {
-      if (value_ == nullptr) {
-        value_ = CreateValue();
+    static auto TearDownTestSuite() -> void {
+      if (value_ != nullptr) {
+        value_ = nullptr;
+      }
+      previousParam_ = nullopt;
+    }
+
+  protected:
+    static auto parseOrGenerate() -> const ObjectId& {
+      auto param = GetParam();
+      if (value_ == nullptr || param != previousParam_) {
+        value_ = std::make_unique<ObjectId>(std::forward<ObjectId>(
+            param.has_value() ? ObjectId::parse(param.value())
+                              : ObjectId::generate()));
+        previousParam_ = param;
       }
 
-      return value_.get();
+      return *value_;
+    }
+
+    static auto value() -> std::optional<ObjectId> {
+      if (value_ == nullptr) {
+        return nullopt;
+      }
+
+      return *value_;
     }
 
   private:
-    auto CreateValue() const requires StaticFactoryOf<Factory, ObjectId> {
-      return std::make_unique<ObjectId>(Factory::Create());
-    }
-
-    auto CreateValue() const requires InvocableFactoryOf<Factory, ObjectId> {
-      Factory factory{};
-      return std::make_unique<ObjectId>(factory());
-    }
-
-    auto CreateValue() const requires InstancedFactoryOf<Factory, ObjectId> {
-      Factory factory{};
-      return std::make_unique<ObjectId>(factory.Create());
-    }
-
-    std::unique_ptr<ObjectId> value_;
+    static ParamType previousParam_;
+    static std::unique_ptr<ObjectId> value_;
 };
 
 }  // namespace afengine::foundation

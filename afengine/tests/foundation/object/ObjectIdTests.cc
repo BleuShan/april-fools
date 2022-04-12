@@ -1,43 +1,48 @@
+#pragma ide diagnostic ignored "cppcoreguidelines-owning-memory"
+#pragma ide diagnostic ignored "modernize-use-trailing-return-type"
+#pragma ide diagnostic ignored "cppcoreguidelines-special-member-functions"
+#pragma ide diagnostic ignored "cppcoreguidelines-avoid-goto"
 #include "ObjectIdTests.h"
-
-#include "afengine/tests/fixtures/ObjectIdFactories.h"
 
 namespace afengine::foundation {
 
-TYPED_TEST_SUITE_P(ObjectIdTests);
+#if WIN32 && UNICODE
+static constexpr StringView kStringViewValue{
+    L"CE737914-D2C3-4CE6-951F-8C931161461D"};
+static constexpr StringView kShortStringViewValue{
+    L"CE737914D2C34CE6951F8C931161461D"};
+#else
+static constexpr StringView kStringViewValue{
+    "CE737914-D2C3-4CE6-951F-8C931161461D"};
+static constexpr StringView kShortStringViewValue{
+    "CE737914D2C34CE6951F8C931161461D"};
+#endif
 
-TYPED_TEST_P(ObjectIdTests, Constructor) {
-  const ObjectId* value{nullptr};
-  ASSERT_NO_THROW({ value = this->Value(); })
+std::unique_ptr<ObjectId> ObjectIdTests::value_{nullptr};
+ObjectIdTests::ParamType ObjectIdTests::previousParam_{nullopt};
+
+TEST_P(ObjectIdTests, generate) {
+  ASSERT_NO_THROW({ parseOrGenerate(); })
       << "Should not throw on value creation";
-  ASSERT_NE(value, nullptr) << "Should not be null.";
-  if constexpr (std::is_same_v<typename TypeParam::ParameterType, String>) {
-    ASSERT_FALSE(value->IsNull()) << "Should not be null uuid";
-  }
+  ASSERT_TRUE(value().has_value()) << "Should not be null.";
+  ASSERT_FALSE(value()->isNull()) << "Should not be null uuid";
 }
 
-TYPED_TEST_P(ObjectIdTests, StringConversion) {
-  const ObjectId* value{nullptr};
-  ASSERT_NO_THROW({ value = this->Value(); })
+TEST_P(ObjectIdTests, toString) {
+  ASSERT_NO_THROW({ parseOrGenerate(); })
       << "Should not throw on value creation";
-  ASSERT_NE(value, nullptr) << "Should not be null.";
-  ASSERT_FALSE(value->IsNull()) << "Should not be null uuid";
-  if (value == nullptr) return;
 
-  const auto stringValue = value->ToString();
-  ASSERT_FALSE(IsEmptyOrBlank(stringValue))
+  const auto stringValue = value()->toString();
+  ASSERT_FALSE(isEmptyOrBlank(stringValue))
       << "Should return a non empty string.";
 
-  if constexpr (std::convertible_to<typename TypeParam::ParameterType,
-                                    StringView>) {
-    const String expected{
-        fixtures::factories::ObjectIdTestFactory::kStringViewValue};
+  if (GetParam().has_value()) {
+    const String expected{kStringViewValue};
     ASSERT_EQ(stringValue, expected) << "Should have the same value.";
   }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ObjectIdTests, Constructor, StringConversion);
-
-INSTANTIATE_TYPED_TEST_SUITE_P(WithObjectIdFactories, ObjectIdTests,
-                               fixtures::factories::ObjectIdFactories);
-} // namespace afengine::foundation
+INSTANTIATE_TEST_SUITE_P(ObjectId, ObjectIdTests,
+                         testing::Values(nullopt, kStringViewValue,
+                                         kShortStringViewValue));
+}  // namespace afengine::foundation

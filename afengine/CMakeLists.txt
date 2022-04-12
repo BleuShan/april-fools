@@ -20,7 +20,7 @@ endif ()
 library_target(
   ${PROJECT_NAME}
   LINK_LIBRARIES
-  PRIVATE
+  PUBLIC
   Folly::folly
   Folly::folly_deps
   absl::btree
@@ -53,7 +53,6 @@ add_sources(
 )
 
 add_subdirectory(macros)
-add_subdirectory(application)
 add_subdirectory(foundation)
 add_subdirectory(runtime)
 

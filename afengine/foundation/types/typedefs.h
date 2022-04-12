@@ -5,12 +5,18 @@
 #include <bitset>
 #include <cstddef>
 #include <cstdint>
+#include <filesystem>
 #include <gsl/gsl>
 #include <limits>
 #include <numeric>
+#include <optional>
+#include <tuple>
 
-namespace afengine::foundation {
-using byte = std::byte;
-}
+namespace afengine {
+using FSPath = std::filesystem::path;
+using std::byte;
+using std::nullopt;
+
+}  // namespace afengine
 
 #endif

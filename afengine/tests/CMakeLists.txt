@@ -4,6 +4,4 @@ test_target(
   AFEngine
 )
 
-add_subdirectory(application)
-add_subdirectory(fixtures)
 add_subdirectory(foundation)
